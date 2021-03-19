@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LittleGameV1._1.State
+namespace LittleGame.State
 {
     class GameStateManager
     {
