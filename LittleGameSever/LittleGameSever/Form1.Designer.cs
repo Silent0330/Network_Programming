@@ -28,13 +28,86 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.btn_StartSever = new System.Windows.Forms.Button();
+            this.txtBox_Log = new System.Windows.Forms.TextBox();
+            this.btn_StopSever = new System.Windows.Forms.Button();
+            this.panel_State = new System.Windows.Forms.Panel();
+            this.btn_StartGame = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // btn_StartSever
+            // 
+            this.btn_StartSever.Location = new System.Drawing.Point(12, 386);
+            this.btn_StartSever.Name = "btn_StartSever";
+            this.btn_StartSever.Size = new System.Drawing.Size(143, 52);
+            this.btn_StartSever.TabIndex = 0;
+            this.btn_StartSever.Text = "Start Sever";
+            this.btn_StartSever.UseVisualStyleBackColor = true;
+            this.btn_StartSever.Click += new System.EventHandler(this.btn_StartSever_Click);
+            // 
+            // txtBox_Log
+            // 
+            this.txtBox_Log.Location = new System.Drawing.Point(12, 12);
+            this.txtBox_Log.Multiline = true;
+            this.txtBox_Log.Name = "txtBox_Log";
+            this.txtBox_Log.ReadOnly = true;
+            this.txtBox_Log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtBox_Log.Size = new System.Drawing.Size(432, 332);
+            this.txtBox_Log.TabIndex = 1;
+            // 
+            // btn_StopSever
+            // 
+            this.btn_StopSever.Enabled = false;
+            this.btn_StopSever.Location = new System.Drawing.Point(310, 386);
+            this.btn_StopSever.Name = "btn_StopSever";
+            this.btn_StopSever.Size = new System.Drawing.Size(143, 52);
+            this.btn_StopSever.TabIndex = 2;
+            this.btn_StopSever.Text = "Stop Sever";
+            this.btn_StopSever.UseVisualStyleBackColor = true;
+            this.btn_StopSever.Click += new System.EventHandler(this.btn_StopSever_Click);
+            // 
+            // panel_State
+            // 
+            this.panel_State.Location = new System.Drawing.Point(450, 12);
+            this.panel_State.Name = "panel_State";
+            this.panel_State.Size = new System.Drawing.Size(338, 332);
+            this.panel_State.TabIndex = 3;
+            // 
+            // btn_StartGame
+            // 
+            this.btn_StartGame.Enabled = false;
+            this.btn_StartGame.Location = new System.Drawing.Point(161, 386);
+            this.btn_StartGame.Name = "btn_StartGame";
+            this.btn_StartGame.Size = new System.Drawing.Size(143, 52);
+            this.btn_StartGame.TabIndex = 4;
+            this.btn_StartGame.Text = "Start Game";
+            this.btn_StartGame.UseVisualStyleBackColor = true;
+            this.btn_StartGame.Click += new System.EventHandler(this.button_StartGame_Click);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btn_StartGame);
+            this.Controls.Add(this.panel_State);
+            this.Controls.Add(this.btn_StopSever);
+            this.Controls.Add(this.txtBox_Log);
+            this.Controls.Add(this.btn_StartSever);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Button btn_StartSever;
+        private System.Windows.Forms.TextBox txtBox_Log;
+        private System.Windows.Forms.Button btn_StopSever;
+        private System.Windows.Forms.Panel panel_State;
+        private System.Windows.Forms.Button btn_StartGame;
     }
 }
 
