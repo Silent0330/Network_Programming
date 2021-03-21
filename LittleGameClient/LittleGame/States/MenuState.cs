@@ -33,7 +33,7 @@ namespace LittleGame.State
             this.Controls.Add(exitButton);
             #endregion
 
-            //textBox
+            #region textBox
             this.textBox.Location = new System.Drawing.Point(300, 200);
             this.textBox.Margin = new System.Windows.Forms.Padding(4);
             this.textBox.Name = "ip textBox";
@@ -41,8 +41,9 @@ namespace LittleGame.State
             this.textBox.TabIndex = 4;
             this.textBox.Text = "192.168.0.100";
             this.textBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox_KeyDown);
-            
-            //join button
+            #endregion
+
+            #region joinButton
             this.joinButton.BackColor = System.Drawing.Color.Transparent;
             this.joinButton.FlatAppearance.BorderSize = 0;
             this.joinButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -59,8 +60,9 @@ namespace LittleGame.State
             this.joinButton.Click += new System.EventHandler(this.join_Click);
             this.joinButton.MouseLeave += new System.EventHandler(this.join_MouseLeave);
             this.joinButton.MouseHover += new System.EventHandler(this.join_MouseHover);
+            #endregion
 
-            //exit button
+            #region exitButton
             this.exitButton.BackColor = System.Drawing.Color.Transparent;
             this.exitButton.FlatAppearance.BorderSize = 0;
             this.exitButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
@@ -77,19 +79,23 @@ namespace LittleGame.State
             this.exitButton.Click += new System.EventHandler(this.exit_Click);
             this.exitButton.MouseLeave += new System.EventHandler(this.exit_MouseLeave);
             this.exitButton.MouseHover += new System.EventHandler(this.exit_MouseHover);
+            #endregion
         }
-        
-        public override void update()
+
+        public override void Update()
+        {
+            if(gsm.csm.Connected)
+            {
+                gsm.SetState(GameStateManager.CLIENTROOMSTATE);
+            }
+        }
+
+        public override void KeyDown(KeyEventArgs e)
         {
 
         }
 
-        public override void keyDown(KeyEventArgs e)
-        {
-
-        }
-
-        public override void keyUp(KeyEventArgs e)
+        public override void KeyUp(KeyEventArgs e)
         {
 
         }
@@ -99,6 +105,11 @@ namespace LittleGame.State
         private void textBox_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Enter)
+            {
+                gsm.csm.StartConnect(textBox.Text, 7777);
+                this.Controls.Remove(textBox);
+            }
+            if(e.KeyCode == Keys.Escape)
             {
                 this.Controls.Remove(textBox);
             }

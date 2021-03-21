@@ -31,8 +31,10 @@
             this.btn_StartSever = new System.Windows.Forms.Button();
             this.txtBox_Log = new System.Windows.Forms.TextBox();
             this.btn_StopSever = new System.Windows.Forms.Button();
-            this.panel_State = new System.Windows.Forms.Panel();
             this.btn_StartGame = new System.Windows.Forms.Button();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.btn_StopGame = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // btn_StartSever
@@ -58,7 +60,7 @@
             // btn_StopSever
             // 
             this.btn_StopSever.Enabled = false;
-            this.btn_StopSever.Location = new System.Drawing.Point(310, 386);
+            this.btn_StopSever.Location = new System.Drawing.Point(161, 386);
             this.btn_StopSever.Name = "btn_StopSever";
             this.btn_StopSever.Size = new System.Drawing.Size(143, 52);
             this.btn_StopSever.TabIndex = 2;
@@ -66,17 +68,10 @@
             this.btn_StopSever.UseVisualStyleBackColor = true;
             this.btn_StopSever.Click += new System.EventHandler(this.btn_StopSever_Click);
             // 
-            // panel_State
-            // 
-            this.panel_State.Location = new System.Drawing.Point(450, 12);
-            this.panel_State.Name = "panel_State";
-            this.panel_State.Size = new System.Drawing.Size(338, 332);
-            this.panel_State.TabIndex = 3;
-            // 
             // btn_StartGame
             // 
             this.btn_StartGame.Enabled = false;
-            this.btn_StartGame.Location = new System.Drawing.Point(161, 386);
+            this.btn_StartGame.Location = new System.Drawing.Point(310, 386);
             this.btn_StartGame.Name = "btn_StartGame";
             this.btn_StartGame.Size = new System.Drawing.Size(143, 52);
             this.btn_StartGame.TabIndex = 4;
@@ -84,18 +79,43 @@
             this.btn_StartGame.UseVisualStyleBackColor = true;
             this.btn_StartGame.Click += new System.EventHandler(this.button_StartGame_Click);
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(450, 12);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.RowTemplate.Height = 27;
+            this.dataGridView1.Size = new System.Drawing.Size(338, 332);
+            this.dataGridView1.TabIndex = 5;
+            // 
+            // btn_StopGame
+            // 
+            this.btn_StopGame.Enabled = false;
+            this.btn_StopGame.Location = new System.Drawing.Point(459, 386);
+            this.btn_StopGame.Name = "btn_StopGame";
+            this.btn_StopGame.Size = new System.Drawing.Size(143, 52);
+            this.btn_StopGame.TabIndex = 6;
+            this.btn_StopGame.Text = "Stop Game";
+            this.btn_StopGame.UseVisualStyleBackColor = true;
+            this.btn_StopGame.Click += new System.EventHandler(this.btn_StopGame_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btn_StopGame);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btn_StartGame);
-            this.Controls.Add(this.panel_State);
             this.Controls.Add(this.btn_StopSever);
             this.Controls.Add(this.txtBox_Log);
             this.Controls.Add(this.btn_StartSever);
             this.Name = "Form1";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -106,8 +126,9 @@
         private System.Windows.Forms.Button btn_StartSever;
         private System.Windows.Forms.TextBox txtBox_Log;
         private System.Windows.Forms.Button btn_StopSever;
-        private System.Windows.Forms.Panel panel_State;
         private System.Windows.Forms.Button btn_StartGame;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btn_StopGame;
     }
 }
 

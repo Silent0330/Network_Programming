@@ -12,10 +12,10 @@ namespace LittleGame.State
     {
         protected GameStateManager gsm;
 
-        public abstract void update();
+        public abstract void Update();
 
-        public abstract void keyDown(KeyEventArgs e);
+        public abstract void KeyDown(KeyEventArgs e);
 
-        public abstract void keyUp(KeyEventArgs e);
+        public abstract void KeyUp(KeyEventArgs e);
     }
 }

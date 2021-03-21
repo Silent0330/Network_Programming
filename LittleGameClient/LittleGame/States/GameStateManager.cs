@@ -1,4 +1,5 @@
 ﻿using LittleGame;
+using LittleGame.Sever;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,21 @@ namespace LittleGame.State
 {
     class GameStateManager
     {
+        public ClientSocketManager csm;
+
         public Form1 form;
         public GameState[] gameStates;
         public int currentState;
 
         public const int NUMGAMESTATE = 3;
-        public const int PLAYINGSTATE = 2;
-        public const int ROOMSTATE = 1;
+        public const int CLIENTPLAYINGSTATE = 2;
+        public const int CLIENTROOMSTATE = 1;
         public const int MENUSTATE = 0;
 
-        public GameStateManager(Form1 form)
+        public GameStateManager(Form1 form, ClientSocketManager csm)
         {
             this.form = form;
+            this.csm = csm;
 
             gameStates = new GameState[NUMGAMESTATE];
 
@@ -34,10 +38,10 @@ namespace LittleGame.State
         {
             if (state == MENUSTATE)
                 gameStates[state] = new MenuState(this);
-            if (state == ROOMSTATE)
-                gameStates[state] = new RoomState(this);
-            if (state == PLAYINGSTATE)
-                gameStates[state] = new PlayingState(this);
+            if (state == CLIENTROOMSTATE)
+                gameStates[state] = new ClientRoomState(this);
+            if (state == CLIENTPLAYINGSTATE)
+                gameStates[state] = new ClientPlayingState(this);
             this.form.Controls.Add(gameStates[currentState]);
             this.form.Focus();
         }
@@ -48,7 +52,7 @@ namespace LittleGame.State
             gameStates[state] = null;
         }
 
-        public void setState(int state)
+        public void SetState(int state)
         {
             form.Controls.Remove(gameStates[currentState]);
             unloadState(currentState);
@@ -56,20 +60,20 @@ namespace LittleGame.State
             loadState(currentState);
         }
 
-        public void update()
+        public void Update()
         {
-            gameStates[currentState].update();
+            gameStates[currentState].Update();
          
         }
 
-        public void keyDown(KeyEventArgs e)
+        public void KeyDown(KeyEventArgs e)
         {
-            gameStates[currentState].keyDown(e);
+            gameStates[currentState].KeyDown(e);
         }
 
-        public void keyUp(KeyEventArgs e)
+        public void KeyUp(KeyEventArgs e)
         {
-            gameStates[currentState].keyUp(e);
+            gameStates[currentState].KeyUp(e);
         }
         
     }

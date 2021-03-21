@@ -9,18 +9,15 @@ namespace LittleGame.TileMap
     class Tile
     {
         //tile types
-        public const int GRASS = 0;
-        public const int TREE = 1;
-        public const int BOX1 = 2;
-        public const int TRI = 3;
-        public const int BOX2 = 4;
-        public const int GROUND = 5;
+        public const int AIR = 0;
+        public const int WALL = 1;
 
         //tile images
         private static System.Drawing.Bitmap[] tileImages =
-         {
-
-         };
+        {
+            global::LittleGame.Properties.Resources.grass,
+            global::LittleGame.Properties.Resources.block1
+    };
 
         private int tileType;
         private bool blocked;
@@ -38,34 +35,14 @@ namespace LittleGame.TileMap
         public void setTileType(int type)
         {
             tileType = type;
-            if (type == GRASS)
+            if (type == AIR)
             {
                 blocked = false;
                 loadImage();
             }
-            else if(type == TREE)
+            else if(type == WALL)
             {
                 blocked = true;
-                loadImage();
-            }
-            else if (type == BOX1)
-            {
-                blocked = true;
-                loadImage();
-            }
-            else if (type == TRI)
-            {
-                blocked = true;
-                loadImage();
-            }
-            else if (type == BOX2)
-            {
-                blocked = true;
-                loadImage();
-            }
-            else if (type == GROUND)
-            {
-                blocked = false;
                 loadImage();
             }
         }
@@ -86,7 +63,7 @@ namespace LittleGame.TileMap
             this.pictureBox.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox.Location = point;
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(50, 50);
+            this.pictureBox.Size = new System.Drawing.Size(TileMap.TILESIZE, TileMap.TILESIZE);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;

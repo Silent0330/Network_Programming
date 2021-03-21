@@ -11,16 +11,43 @@ namespace LittleGameSever.SeverManager
     class ClientHandler
     {
         private Socket socket;
-        private int number;
+        private int id;
         private Thread recvThread;
 
-        public ClientHandler(int clientNumber, Socket clientSocket)
+        private bool connected;
+        public bool Connected { get => connected; }
+
+        private bool readyToStart;
+        public bool ReadyToStart { get => readyToStart; }
+
+        //datas
+        private bool up;
+        public bool Up { get => up; }
+        private bool down;
+        public bool Down { get => down; }
+        private bool left;
+        public bool Left { get => left; }
+        private bool right;
+        public bool Right { get => right; }
+
+
+        public ClientHandler(int clientId, Socket clientSocket)
         {
-            number = clientNumber;
+            this.id = clientId;
+            socket = clientSocket;
+
+            connected = true;
+            readyToStart = false;
 
             recvThread = new Thread(RecvMessage);
             recvThread.IsBackground = true;
             recvThread.Start();
+        }
+
+        public void ChangeId(int new_id)
+        {
+            id = new_id;
+            SendMessage("Id," + id.ToString());
         }
 
         private void RecvMessage()
@@ -40,43 +67,51 @@ namespace LittleGameSever.SeverManager
                 }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
                 string[] messages = message.Split(',');
+
+                if (messages[0].Equals("Up"))
+                {
+                    if (messages[1].Equals("T")) up = true;
+                    if (messages[1].Equals("F")) up = false;
+                }
+                else if (messages[0].Equals("Down"))
+                {
+                    if (messages[1].Equals("T")) down = true;
+                    if (messages[1].Equals("F")) down = false;
+                }
+                else if (messages[0].Equals("Left"))
+                {
+                    if (messages[1].Equals("T")) left = true;
+                    if (messages[1].Equals("F")) left = false;
+                }
+                else if (messages[0].Equals("Right"))
+                {
+                    if (messages[1].Equals("T")) right = true;
+                    if (messages[1].Equals("F")) right = false;
+                }
             }
         }
 
         public bool SendMessage(string message)
         {
-            bool connectState = true;
-            bool blockingState = socket.Blocking;
-
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
             try
             {
-                socket.Blocking = false;
                 socket.Send(bytes);
             }
-            catch (SocketException e)
+            catch (Exception e)
             {
-                // 10035 == WSAEWOULDBLOCK
-                if (e.NativeErrorCode.Equals(10035))
-                {
-                    //Console.WriteLine("Still Connected, but the Send would block");
-                    connectState = true;
-                }
-                else
-                {
-                    //Console.WriteLine("Disconnected: error code {0}!", e.NativeErrorCode);
-                    connectState = false;
-                }
+                Console.WriteLine(e.ToString());
+                return false;
             }
-            socket.Blocking = blockingState;
-
-            return connectState;
+            return true;
         }
 
         public void Close()
         {
-            if(socket != null)
+            connected = false;
+            if (socket != null)
             {
+                socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
                 socket = null;
             }

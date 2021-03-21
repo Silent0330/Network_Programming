@@ -34,23 +34,23 @@ namespace LittleGame.Entity
         public bool Left { get { return left; } set { left = value; } }
         public bool Right { get { return right; } set { right = value; } }
 
-        public Rectangle getRectangle()
+        public Rectangle GetRectangle()
         {
             return new Rectangle(point.X, point.Y, width, height);
         }
 
-        public bool interSection(MapObject obj)
+        public bool InterSection(MapObject obj)
         {
-            Rectangle rec1 = getRectangle();
-            Rectangle rec2 = obj.getRectangle();
+            Rectangle rec1 = GetRectangle();
+            Rectangle rec2 = obj.GetRectangle();
             return rec1.IntersectsWith(rec2);
         }
 
-        public void getNextPosition()
+        public void GetNextPosition()
         {
             if (moveDelay == 0)
             {
-                setSpeed();
+                SetSpeed();
                 dx = point.X + vx;
                 dy = point.Y + vy;
                 if (vx != 0 || vy != 0)
@@ -59,7 +59,7 @@ namespace LittleGame.Entity
             else moveDelay--;
         }
 
-        public void setSpeed()
+        public void SetSpeed()
         {
             vx = vy = 0;
             if (up)
@@ -80,7 +80,7 @@ namespace LittleGame.Entity
             }
         }
 
-        protected void checkMapCollision()
+        protected void CheckMapCollision()
         {
 
             bool leftBlocked, rightBlocked, upBlocked, downBlocked;
@@ -125,17 +125,17 @@ namespace LittleGame.Entity
             }
         }
         
-        protected void setPosition()
+        protected void SetPosition()
         {
             point.X = dx;
             point.Y = dy;
         }
 
-        protected void move()
+        protected void Move()
         {
-            getNextPosition();
-            checkMapCollision();
-            setPosition();
+            GetNextPosition();
+            CheckMapCollision();
+            SetPosition();
         }
     }
 }

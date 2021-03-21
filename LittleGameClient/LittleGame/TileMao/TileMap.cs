@@ -10,11 +10,11 @@ namespace LittleGame.TileMap
     class TileMap
     {
         private State.GameState state;
-        public const int numCols = 16;
-        public const int numRows = 12;
+        public const int numCols = 32;
+        public const int numRows = 24;
         private Tile[,] tiles;
         public int[,] objMap;
-        public int tileSize = 50;
+        public const int TILESIZE = 25;
 
         public TileMap(State.GameState state, string map)
         {
@@ -30,7 +30,7 @@ namespace LittleGame.TileMap
                 read = str.ReadLine();
                 for(int j = 0; j < numCols; j++)
                 {
-                    tiles[i,j] = new Tile(read[j]- '0', j * tileSize, i * tileSize);
+                    tiles[i,j] = new Tile(read[j]- '0', j * TILESIZE, i * TILESIZE);
                     this.state.Controls.Add(tiles[i,j].pictureBox);
                     this.objMap[i, j] = 0;
                 }

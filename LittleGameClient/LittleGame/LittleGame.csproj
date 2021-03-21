@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientManger\ClientSocketManager.cs" />
+    <Compile Include="Entity\ClientPlayer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -54,17 +56,17 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\ClientPlayingState.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="States\ClientRoomState.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="States\GameState.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="States\GameStateManager.cs" />
     <Compile Include="States\MenuState.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="States\PlayingState.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="States\RoomState.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TileMao\Tile.cs" />
@@ -92,9 +94,194 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\p1down.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\menubg.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Map1_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\block1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\block2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\block3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\block4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueBomp.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bomb.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\box1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\box2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ghost_explosion1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ghost_explosion2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\grass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LeftButton_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LeftButton_Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LeftButton_Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Map1_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Map1_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Map1_4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Menubg.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1movedown.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1moveleft.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1moveright.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1moveup.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p1up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2movedown.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2moveleft.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2moveright.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2moveup.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p2up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3movedown.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3moveleft.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3moveright.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3moveup.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p3up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4movedown.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4moveleft.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4moveright.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4moveup.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\p4up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedBomp.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RightButton_Blue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RightButton_Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RightButton_Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tree.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tree1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tree2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tree3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tree4.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

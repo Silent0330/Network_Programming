@@ -1,4 +1,5 @@
 ﻿using LittleGame.Entity;
+using LittleGame.SeverManager;
 using LittleGame.TileMaps;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace LittleGame.State
 {
     class PlayingState
     {
+        public SeverSocketManager ssm;
+
         public TileMap tileMap;
         public List<Entity.Bullet> bullet_List;
         
@@ -39,28 +42,28 @@ namespace LittleGame.State
 
 
 
-        public PlayingState(int player_num)
+        public PlayingState(SeverSocketManager ssm, int player_num)
         {
-            tileMap = new TileMap(maps[0]);
-            players = new Player[maxPlayerNum];
-            playerNum = player_num;
+            this.ssm = ssm;
+            this.tileMap = new TileMap(maps[0]);
+            this.players = new Player[maxPlayerNum];
+            this.playerNum = player_num;
             for (int i = 0; i < playerNum; i++)
             {
-                players[playerNum] = new Entity.Player(this, i, playerPoints[i].X, playerPoints[i].Y);
-                playerNum++;
+                players[i] = new Entity.Player(this, i, playerPoints[i].X, playerPoints[i].Y);
             }
             aliveNum = playerNum;
             gameOver = false;
             winner = 0;
         }
         
-        public void update()
+        public void Update()
         {
             if (!gameOver)
             {
                 for (int i = 0; i < playerNum; i++)
                 {
-                    players[i].update();
+                    players[i].Update();
                 }
                 if (aliveNum <= 1)
                 {

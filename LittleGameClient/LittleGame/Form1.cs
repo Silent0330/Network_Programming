@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LittleGame.Sever;
+using LittleGame.State;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +14,28 @@ namespace LittleGame
 {
     public partial class Form1 : Form
     {
+        private Timer timer;
+        private GameStateManager gsm;
+        private ClientSocketManager csm;
+
         public Form1()
         {
             InitializeComponent();
+            csm = new ClientSocketManager();
+            gsm = new GameStateManager(this, csm);
+
+            timer = new System.Windows.Forms.Timer();
+            this.timer.Interval = 100;
+            this.timer.Tick += new System.EventHandler(this.loop);
+            this.timer.Enabled = true;
+            this.timer.Start();
+               
         }
+        
+        private void loop(object sender, EventArgs e)
+        {
+            gsm.Update();
+        }
+
     }
 }

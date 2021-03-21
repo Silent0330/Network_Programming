@@ -11,8 +11,8 @@ namespace LittleGame.Entity
     class Player : MapObject
     {
         // info
-        private int number;
-        public int Number { get { return number; } }
+        private int id;
+        public int Id { get { return id; } }
         private bool alive;
         public bool Alive { get { return alive; } }
         private int hp;
@@ -35,7 +35,7 @@ namespace LittleGame.Entity
         private bool attack;
         public bool Attack { get { return attack; } set { attack = value; } }
 
-        public Player(PlayingState state, int number, int x, int y)
+        public Player(PlayingState state, int id, int x, int y)
         {
             //parants
             this.state = state;
@@ -49,7 +49,7 @@ namespace LittleGame.Entity
             this.moveDelay = 0;
 
             //info
-            this.number = number;
+            this.id = id;
             this.alive = true;
             this.hp = 1;
 
@@ -62,12 +62,12 @@ namespace LittleGame.Entity
             this.face = DOWN;
 
             //rectangle
-            this.width = 40;
-            this.height = 40;
+            this.width = 20;
+            this.height = 20;
             
         }
 
-        public void hited(int damage)
+        public void Hited(int damage)
         {
             if (alive)
             {
@@ -80,7 +80,7 @@ namespace LittleGame.Entity
             }
         }
         
-        public void setAction()
+        public void SetAction()
         {
             if (up)
             {
@@ -100,12 +100,21 @@ namespace LittleGame.Entity
             }
         }
         
-        public void update()
+        private void SetControll()
         {
-            if (alive)
+            up = state.ssm.clientHandler_List[id].Up;
+            down = state.ssm.clientHandler_List[id].Down;
+            left = state.ssm.clientHandler_List[id].Left;
+            right = state.ssm.clientHandler_List[id].Right;
+        }
+
+        public void Update()
+        {
+            if (Alive)
             {
-                setAction();
-                move();
+                SetControll();
+                SetAction();
+                Move();
             }
         }
 

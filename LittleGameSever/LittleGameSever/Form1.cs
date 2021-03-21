@@ -19,29 +19,51 @@ namespace LittleGameSever
         private Timer timer;
 
         private bool playing;
+        public bool Playing { get => playing; }
         PlayingState playingState;
+
+        private DataTable propertiesDataTable;
+
+        public Queue<string> log_List;
+        
 
         public Form1()
         {
             InitializeComponent();
-            ssm = new SeverSocketManager(4, txtBox_Log);
+            log_List = new Queue<string>();
             playing = false;
+
+            ssm = new SeverSocketManager(this, 4);
+
             timer = new System.Windows.Forms.Timer();
             this.timer.Interval = 1;
             this.timer.Tick += new System.EventHandler(this.loop);
             this.timer.Enabled = true;
             this.timer.Start();
+
+            propertiesDataTable = new DataTable();
+            propertiesDataTable.Columns.Add("Properties");
+            propertiesDataTable.Columns.Add("Value");
+
+            propertiesDataTable.Rows.Add("Listening", ssm.Listening.ToString());
+            GetIpAddress();
+
+            dataGridView1.DataSource = propertiesDataTable;
         }
 
         private void loop(object sender, EventArgs e)
         {
+            for(int i = 0; i < 10 && log_List.Count > 0; i++)
+            {
+                txtBox_Log.AppendText(log_List.Dequeue());
+            }
             if(playing)
             {
-                playingState.update();
+                playingState.Update();
             }
         }
 
-        public void getIpAddress()
+        public void GetIpAddress()
         {
             // 取得本機名稱
             String strHostName = Dns.GetHostName();
@@ -55,8 +77,8 @@ namespace LittleGameSever
             int num = 1;
             foreach (IPAddress ipAddress in ipHostEntry.AddressList)
             {
-                Console.WriteLine("IP #" + num + ": " + ipAddress.ToString());
-                num = num + 1;
+                propertiesDataTable.Rows.Add("Ip", ipAddress.ToString());
+                num++;
             }
         }
 
@@ -74,14 +96,32 @@ namespace LittleGameSever
             btn_StopSever.Enabled = false;
             btn_StartSever.Enabled = true;
             btn_StartGame.Enabled = false;
+            btn_StopGame.Enabled = false;
         }
 
         private void button_StartGame_Click(object sender, EventArgs e)
         {
+            playingState = new PlayingState(ssm, ssm.CurConnectionNum);
+            for (int i = 0; i < ssm.CurConnectionNum; i++)
+            {
+                ssm.SendMessage(i, "Start");
+            }
             playing = true;
-            playingState = new PlayingState(ssm.CurConnectionNum);
+            btn_StartGame.Enabled = false;
             btn_StopSever.Enabled = false;
+            btn_StopGame.Enabled = true;
         }
 
+        private void btn_StopGame_Click(object sender, EventArgs e)
+        {
+            if(playing)
+            {
+                playingState = null;
+                playing = false;
+            }
+            btn_StopGame.Enabled = false;
+            btn_StartGame.Enabled = true;
+            btn_StopSever.Enabled = true;
+        }
     }
 }
