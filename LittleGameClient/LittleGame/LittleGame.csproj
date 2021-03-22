@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientManger\ClientSocketManager.cs" />
+    <Compile Include="Entity\ClientBullet.cs" />
     <Compile Include="Entity\ClientPlayer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

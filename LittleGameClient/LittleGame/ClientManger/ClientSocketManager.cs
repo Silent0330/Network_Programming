@@ -146,6 +146,10 @@ namespace LittleGame.Sever
                     {
                         state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
                     }
+                    else if (messages[0].Equals("Face"))
+                    {
+                        state.players[int.Parse(messages[1])].SetFace(int.Parse(messages[2]));
+                    }
                     else if (messages[0].Equals("PlayerNum"))
                     {
                         playerNum = int.Parse(messages[1]);

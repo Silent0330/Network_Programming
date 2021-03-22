@@ -80,24 +80,41 @@ namespace LittleGame.Entity
             }
         }
         
-        public void SetAction()
+        public bool SetAction()
         {
             if (up)
             {
-                face = UP;
+                if(face != UP)
+                {
+                    face = UP;
+                    return true;
+                }
             }
             else if (down)
             {
-                face = DOWN;
+                if (face != DOWN)
+                {
+                    face = DOWN;
+                    return true;
+                }
             }
             else if (left)
             {
-                face = LEFT;
+                if (face != LEFT)
+                {
+                    face = LEFT;
+                    return true;
+                }
             }
             else if (right)
             {
-                face = RIGHT;
+                if (face != RIGHT)
+                {
+                    face = RIGHT;
+                    return true;
+                }
             }
+            return false;
         }
         
         private void SetControll()
@@ -116,12 +133,18 @@ namespace LittleGame.Entity
             if (Alive)
             {
                 SetControll();
-                SetAction();
                 if(Move())
                 {
                     for(int i = 0; i < state.playerNum; i++)
                     {
                         state.ssm.SendMessage(i, "Move," + id + "," + point.X.ToString() + "," + point.Y.ToString());
+                    }
+                }
+                if (SetAction())
+                {
+                    for (int i = 0; i < state.playerNum; i++)
+                    {
+                        state.ssm.SendMessage(i, "Face," + id + "," + face.ToString());
                     }
                 }
             }
