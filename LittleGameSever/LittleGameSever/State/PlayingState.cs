@@ -23,6 +23,7 @@ namespace LittleGame.State
         
         public Entity.Player[] players;
         private bool gameOver;
+        public bool GameOver { get => gameOver; }
         public int playerNum;
         public int aliveNum;
         public const int maxPlayerNum = 4;
@@ -75,9 +76,12 @@ namespace LittleGame.State
                         }
                     }
                     gameOver = true;
+                    for (int i = 0; i < playerNum; i++)
+                    {
+                        ssm.SendMessage(i, "GameOver");
+                    }
                 }
             }
-            
         }
     }
 }

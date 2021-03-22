@@ -60,6 +60,10 @@ namespace LittleGameSever
             if(playing)
             {
                 playingState.Update();
+                if(playingState.GameOver)
+                {
+                    StopGame();
+                }
             }
         }
 
@@ -134,11 +138,21 @@ namespace LittleGameSever
 
         private void btn_StopGame_Click(object sender, EventArgs e)
         {
-            if(playing)
+            StopGame();
+        }
+
+        private void StopGame()
+        {
+            if (playing)
             {
                 playingState = null;
                 playing = false;
+                for (int i = 0; i < ssm.CurConnectionNum; i++)
+                {
+                    ssm.SendMessage(i, "GameOver");
+                }
             }
+            ssm.StartListening();
             btn_StopGame.Enabled = false;
             btn_StartGame.Enabled = true;
             btn_StopSever.Enabled = true;

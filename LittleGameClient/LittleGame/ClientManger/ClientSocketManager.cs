@@ -138,6 +138,10 @@ namespace LittleGame.Sever
                         gameStart = true;
                         SendMessage("Ready," + true.ToString());
                     }
+                    else if (messages[0].Equals("Id"))
+                    {
+                        playerId = int.Parse(messages[1]);
+                    }
                     else if (messages[0].Equals("Move"))
                     {
                         state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
@@ -146,9 +150,9 @@ namespace LittleGame.Sever
                     {
                         playerNum = int.Parse(messages[1]);
                     }
-                    else if (message[0].Equals("Move"))
+                    else if (messages[0].Equals("GameOver"))
                     {
-                        state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                        gameStart = false;
                     }
                 }
                 catch (Exception e)

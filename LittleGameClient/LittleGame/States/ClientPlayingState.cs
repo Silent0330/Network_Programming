@@ -152,6 +152,10 @@ namespace LittleGame.State
                 {
                     players[i].Update();
                 }
+                if (!gsm.csm.GameStart)
+                {
+                    gameOver = true;
+                }
             }
             if (gameOver)
             {
