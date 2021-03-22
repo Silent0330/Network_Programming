@@ -18,7 +18,7 @@ namespace LittleGame.Entity
         protected System.Drawing.Point point;
         protected int height, width;
         protected int vx, vy;
-        protected int speed;
+        protected int speed = 5;
         protected int dx, dy;
 
         //move state
@@ -54,7 +54,7 @@ namespace LittleGame.Entity
                 dx = point.X + vx;
                 dy = point.Y + vy;
                 if (vx != 0 || vy != 0)
-                    moveDelay = 7;
+                    moveDelay = 4;
             }
             else moveDelay--;
         }
@@ -64,11 +64,11 @@ namespace LittleGame.Entity
             vx = vy = 0;
             if (up)
             {
-                vy += speed;
+                vy -= speed;
             }
             if (down)
             {
-                vy -= speed;
+                vy += speed;
             }
             if (left)
             {
@@ -125,17 +125,22 @@ namespace LittleGame.Entity
             }
         }
         
-        protected void SetPosition()
+        protected bool SetPosition()
         {
-            point.X = dx;
-            point.Y = dy;
+            bool changed = (point.X != dx || point.Y != dy);
+            if(changed)
+            {
+                point.X = dx;
+                point.Y = dy;
+            }
+            return changed;
         }
 
-        protected void Move()
+        protected bool Move()
         {
             GetNextPosition();
             CheckMapCollision();
-            SetPosition();
+            return SetPosition();
         }
     }
 }

@@ -93,7 +93,7 @@ namespace LittleGame.Client
             this.pictureBox.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox.Location = point;
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(25, 25);
+            this.pictureBox.Size = new System.Drawing.Size(50, 50);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
@@ -117,6 +117,7 @@ namespace LittleGame.Client
         {
             this.point.X = x;
             this.point.Y = y;
+            Console.WriteLine(point);
         }
 
         public void SetFace(int face)

@@ -118,50 +118,63 @@ namespace LittleGame.State
                 gsm.SetState(GameStateManager.CLIENTPLAYINGSTATE);
             }
 
-            playerId = gsm.csm.PlayerId;
-            playerNum = gsm.csm.PlayerNum;
-
-            for (int i = 0; i < 4; i++)
+            bool refresh = false;
+            if (playerId != gsm.csm.PlayerId)
             {
-                if (i == playerId)
+                playerId = gsm.csm.PlayerId;
+                refresh = true;
+            }
+            if (playerNum != gsm.csm.PlayerNum)
+            {
+                playerNum = gsm.csm.PlayerNum;
+                refresh = true;
+            }
+
+            if (refresh)
+            {
+                for (int i = 0; i < 4; i++)
                 {
-                    playerInfoLabels[i].ForeColor = System.Drawing.Color.Red;
-                    plaIcon[i].Image = playerIcons[i];
-                    this.subpanels[i].BackColor = System.Drawing.Color.FromArgb(80, 255, 0, 0);
-                    if (this.playerInfoLabels[i].Parent != this.subpanels[i])
+                    if (i == playerId)
                     {
-                        this.Controls.Remove(this.playerInfoLabels[i]);
-                        this.subpanels[i].Controls.Add(this.playerInfoLabels[i]);
-                        this.playerInfoLabels[i].Location = new System.Drawing.Point(0, 25);
+                        playerInfoLabels[i].ForeColor = System.Drawing.Color.Red;
+                        plaIcon[i].Image = playerIcons[i];
+                        this.subpanels[i].BackColor = System.Drawing.Color.FromArgb(80, 255, 0, 0);
+                        if (this.playerInfoLabels[i].Parent != this.subpanels[i])
+                        {
+                            this.Controls.Remove(this.playerInfoLabels[i]);
+                            this.subpanels[i].Controls.Add(this.playerInfoLabels[i]);
+                            this.playerInfoLabels[i].Location = new System.Drawing.Point(0, 25);
+                        }
+                        this.subpanels[i].Visible = true;
                     }
-                    this.subpanels[i].Visible = true;
-                }
-                else if (i < playerNum)
-                {
-                    playerInfoLabels[i].ForeColor = System.Drawing.Color.Green;
-                    plaIcon[i].Image = playerIcons[i];
-                    this.subpanels[i].BackColor = System.Drawing.Color.FromArgb(80, 0, 255, 0);
-                    if (this.playerInfoLabels[i].Parent != this.subpanels[i])
+                    else if (i < playerNum)
                     {
-                        this.Controls.Remove(this.playerInfoLabels[i]);
-                        this.subpanels[i].Controls.Add(this.playerInfoLabels[i]);
-                        this.playerInfoLabels[i].Location = new System.Drawing.Point(0, 25);
+                        playerInfoLabels[i].ForeColor = System.Drawing.Color.Green;
+                        plaIcon[i].Image = playerIcons[i];
+                        this.subpanels[i].BackColor = System.Drawing.Color.FromArgb(80, 0, 255, 0);
+                        if (this.playerInfoLabels[i].Parent != this.subpanels[i])
+                        {
+                            this.Controls.Remove(this.playerInfoLabels[i]);
+                            this.subpanels[i].Controls.Add(this.playerInfoLabels[i]);
+                            this.playerInfoLabels[i].Location = new System.Drawing.Point(0, 25);
+                        }
+                        this.subpanels[i].Visible = true;
                     }
-                    this.subpanels[i].Visible = true;
-                }
-                else
-                {
-                    playerInfoLabels[i].ForeColor = System.Drawing.Color.Black;
-                    plaIcon[i].Image = null;
-                    if (this.playerInfoLabels[i].Parent == this.subpanels[i])
+                    else
                     {
-                        this.subpanels[i].Controls.Remove(this.playerInfoLabels[i]);
-                        this.Controls.Add(this.playerInfoLabels[i]);
-                        this.playerInfoLabels[i].Location = new System.Drawing.Point(0, i * 100 + 50);
+                        playerInfoLabels[i].ForeColor = System.Drawing.Color.Black;
+                        plaIcon[i].Image = null;
+                        if (this.playerInfoLabels[i].Parent == this.subpanels[i])
+                        {
+                            this.subpanels[i].Controls.Remove(this.playerInfoLabels[i]);
+                            this.Controls.Add(this.playerInfoLabels[i]);
+                            this.playerInfoLabels[i].Location = new System.Drawing.Point(0, i * 100 + 50);
+                        }
+                        this.subpanels[i].Visible = false;
                     }
-                    this.subpanels[i].Visible = false;
                 }
             }
+            
         }
 
         //back button

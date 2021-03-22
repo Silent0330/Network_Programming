@@ -10,11 +10,11 @@ namespace LittleGame.TileMap
     class TileMap
     {
         private State.GameState state;
-        public const int numCols = 32;
-        public const int numRows = 24;
+        public const int numCols = 16;
+        public const int numRows = 12;
         private Tile[,] tiles;
         public int[,] objMap;
-        public const int TILESIZE = 25;
+        public const int TILESIZE = 50;
 
         public TileMap(State.GameState state, string map)
         {

@@ -44,6 +44,7 @@ namespace LittleGame.State
         public ClientPlayingState(State.GameStateManager gsm)
         {
             this.gsm = gsm;
+            this.playerNum = gsm.csm.PlayerNum;
             players = new Client.ClientPlayer[4];
             gameOver = false;
 
@@ -72,15 +73,36 @@ namespace LittleGame.State
             this.winnerLabel.Font = new System.Drawing.Font("標楷體", 32F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.winnerLabel.Text = "P1 is winner";
 
+            gsm.csm.state = this;
         }
         
         public override void KeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W) { up = true; }
-            if (e.KeyCode == Keys.S) { down = true; }
-            if (e.KeyCode == Keys.A) { left = true; }
-            if (e.KeyCode == Keys.D) { right = true; }
-            if (e.KeyCode == Keys.Space) { attack = true; }
+            if (e.KeyCode == Keys.W && !up)
+            {
+                up = true;
+                gsm.csm.SendMessage("Up," + up.ToString());
+            }
+            if (e.KeyCode == Keys.S && !down)
+            {
+                down = true;
+                gsm.csm.SendMessage("Down," + down.ToString());
+            }
+            if (e.KeyCode == Keys.A && !left)
+            {
+                left = true;
+                gsm.csm.SendMessage("Left," + left.ToString());
+            }
+            if (e.KeyCode == Keys.D && !right)
+            {
+                right = true;
+                gsm.csm.SendMessage("Right," + right.ToString());
+            }
+            if (e.KeyCode == Keys.Space && !attack)
+            {
+                attack = true;
+                gsm.csm.SendMessage("Attack," + attack.ToString());
+            }
 
             if (gameOver && e.KeyCode == Keys.Space)
             {
@@ -91,11 +113,31 @@ namespace LittleGame.State
 
         public override void KeyUp(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W) { up = false; }
-            if (e.KeyCode == Keys.S) { down = false; }
-            if (e.KeyCode == Keys.A) { left = false; }
-            if (e.KeyCode == Keys.D) { right = false; }
-            if (e.KeyCode == Keys.Space) { attack = false; }
+            if (e.KeyCode == Keys.W && up)
+            {
+                up = false;
+                gsm.csm.SendMessage("Up," + up.ToString());
+            }
+            if (e.KeyCode == Keys.S && down)
+            {
+                down = false;
+                gsm.csm.SendMessage("Down," + down.ToString());
+            }
+            if (e.KeyCode == Keys.A && left)
+            {
+                left = false;
+                gsm.csm.SendMessage("Left," + left.ToString());
+            }
+            if (e.KeyCode == Keys.D && right)
+            {
+                right = false;
+                gsm.csm.SendMessage("Right," + right.ToString());
+            }
+            if (e.KeyCode == Keys.Space && attack)
+            {
+                attack = false;
+                gsm.csm.SendMessage("Attack," + attack.ToString());
+            }
         }
 
         public override void Update()

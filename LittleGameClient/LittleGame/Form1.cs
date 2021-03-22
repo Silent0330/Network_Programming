@@ -37,5 +37,15 @@ namespace LittleGame
             gsm.Update();
         }
 
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            gsm.KeyDown(e);
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            gsm.KeyUp(e);
+        }
+
     }
 }

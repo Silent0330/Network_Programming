@@ -45,7 +45,7 @@ namespace LittleGame.Entity
             this.point = new Point(x, y);
             this.vx = 0;
             this.vy = 0;
-            this.speed = 5;
+            this.speed = 10;
             this.moveDelay = 0;
 
             //info
@@ -62,8 +62,8 @@ namespace LittleGame.Entity
             this.face = DOWN;
 
             //rectangle
-            this.width = 20;
-            this.height = 20;
+            this.width = 40;
+            this.height = 40;
             
         }
 
@@ -102,10 +102,13 @@ namespace LittleGame.Entity
         
         private void SetControll()
         {
-            up = state.ssm.clientHandler_List[id].Up;
-            down = state.ssm.clientHandler_List[id].Down;
-            left = state.ssm.clientHandler_List[id].Left;
-            right = state.ssm.clientHandler_List[id].Right;
+            if(id < state.ssm.CurConnectionNum)
+            {
+                up = state.ssm.clientHandler_List[id].Up;
+                down = state.ssm.clientHandler_List[id].Down;
+                left = state.ssm.clientHandler_List[id].Left;
+                right = state.ssm.clientHandler_List[id].Right;
+            }
         }
 
         public void Update()
@@ -114,7 +117,13 @@ namespace LittleGame.Entity
             {
                 SetControll();
                 SetAction();
-                Move();
+                if(Move())
+                {
+                    for(int i = 0; i < state.playerNum; i++)
+                    {
+                        state.ssm.SendMessage(i, "Move," + id + "," + point.X.ToString() + "," + point.Y.ToString());
+                    }
+                }
             }
         }
 

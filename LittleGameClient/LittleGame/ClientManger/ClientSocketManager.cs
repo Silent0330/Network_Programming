@@ -8,7 +8,7 @@ namespace LittleGame.Sever
 {
     class ClientSocketManager
     {
-        ClientPlayingState state;
+        public ClientPlayingState state;
 
         private Socket clientSocket;
         private Thread recvThread;
@@ -23,7 +23,7 @@ namespace LittleGame.Sever
         private bool gameStart;
         public bool GameStart { get => gameStart; }
 
-
+        
 
         public ClientSocketManager()
         {
@@ -83,6 +83,7 @@ namespace LittleGame.Sever
         public void CloseConnection()
         {
             connected = false;
+            gameStart = false;
             try
             {
                 if(recvThread != null)
@@ -96,23 +97,25 @@ namespace LittleGame.Sever
                     clientSocket = null;
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.ToString());
             }
         }
         
 
-        private void SendMessage(String message)
+        public void SendMessage(string message)
         {
+            message += ",";
             if (Connected)
             {
                 try
                 {
                     clientSocket.Send(System.Text.Encoding.UTF8.GetBytes(message));
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.Write(e.ToString());
                     CloseConnection();
                 }
             }
@@ -128,23 +131,29 @@ namespace LittleGame.Sever
                     clientSocket.Receive(bytes);
                     string message = System.Text.Encoding.UTF8.GetString(bytes);
                     string[] messages = message.Split(',');
-                    System.Console.WriteLine(messages[0]);
+                    Console.WriteLine(message);
 
-                    if (messages[0] == "Start")
+                    if (messages[0].Equals("Start"))
                     {
                         gameStart = true;
+                        SendMessage("Ready," + true.ToString());
                     }
-                    else if (messages[0] == "Move")
+                    else if (messages[0].Equals("Move"))
                     {
                         state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
                     }
-                    else if (messages[0] == "PlayerNum")
+                    else if (messages[0].Equals("PlayerNum"))
                     {
                         playerNum = int.Parse(messages[1]);
                     }
+                    else if (message[0].Equals("Move"))
+                    {
+                        state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                    }
                 }
-                catch
+                catch (Exception e)
                 {
+                    Console.Write(e.ToString());
                     CloseConnection();
                 }
             }

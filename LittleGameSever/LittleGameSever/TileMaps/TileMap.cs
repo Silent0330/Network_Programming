@@ -9,11 +9,11 @@ namespace LittleGame.TileMaps
 {
     class TileMap
     {
-        public const int numCols = 32;
-        public const int numRows = 24;
+        public const int numCols = 16;
+        public const int numRows = 12;
         private Tile[,] tiles;
         public int[,] objMap;
-        public const int TILE_SIZE = 25;
+        public const int TILE_SIZE = 50;
 
         public TileMap(string map)
         {

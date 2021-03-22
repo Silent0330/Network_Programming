@@ -79,10 +79,12 @@ namespace LittleGame.SeverManager
         {
             for (int i = clientHandler_List.Count-1; i >= 0; i--)
             {
+                clientHandler_List[i].CheckConnection();
                 if (!clientHandler_List[i].Connected)
                 {
                     try
                     {
+                        form.log_List.Enqueue("client #id : " + IPAddress.Parse(((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Address.ToString()) + "  #port : " + ((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Port.ToString() + Environment.NewLine + " disconnect ");
                         clientHandler_List[i].Close();
                         clientHandler_List.RemoveAt(i);
                         clientId_List.RemoveAt(i);
@@ -171,9 +173,11 @@ namespace LittleGame.SeverManager
 
         }
         
-        public bool SendMessage(int clientNumber, string message)
+        public bool SendMessage(int clientId, string message)
         {
-            bool connectState = clientHandler_List[clientNumber].SendMessage(message);
+            if (clientId >= clientHandler_List.Count || !clientHandler_List[clientId].Connected)
+                return false;
+            bool connectState = clientHandler_List[clientId].SendMessage(message);
             return connectState;
         }
 
@@ -192,6 +196,7 @@ namespace LittleGame.SeverManager
                 clientHandler_List.First().Close();
                 clientHandler_List.RemoveAt(0);
             }
+            curConnectionNum = 0;
             clientId_List.Clear();
             if (severSocket != null)
             {

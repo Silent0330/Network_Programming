@@ -101,11 +101,31 @@ namespace LittleGameSever
 
         private void button_StartGame_Click(object sender, EventArgs e)
         {
-            playingState = new PlayingState(ssm, ssm.CurConnectionNum);
+            ssm.StopListeing();
             for (int i = 0; i < ssm.CurConnectionNum; i++)
             {
                 ssm.SendMessage(i, "Start");
             }
+            int count = 0;
+            while(true)
+            {
+                bool ready = true;
+                for (int i = 0; i < ssm.CurConnectionNum; i++)
+                    if (!ssm.clientHandler_List[i].ReadyToStart)
+                        ready = false;
+                if (ready)
+                    break;
+                count++;
+                if(count > 10000)
+                {
+                    for (int i = 0; i < ssm.CurConnectionNum; i++)
+                    {
+                        ssm.SendMessage(i, "Start");
+                    }
+                    count = 0;
+                }
+            }
+            playingState = new PlayingState(ssm, ssm.CurConnectionNum);
             playing = true;
             btn_StartGame.Enabled = false;
             btn_StopSever.Enabled = false;
@@ -122,6 +142,11 @@ namespace LittleGameSever
             btn_StopGame.Enabled = false;
             btn_StartGame.Enabled = true;
             btn_StopSever.Enabled = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace LittleGameSever.SeverManager
     class ClientHandler
     {
         private Socket socket;
+        public Socket Sockeet { get => socket; }
         private int id;
         private Thread recvThread;
 
@@ -35,6 +36,8 @@ namespace LittleGameSever.SeverManager
         {
             this.id = clientId;
             socket = clientSocket;
+
+            up = down = left = right = false;
 
             connected = true;
             readyToStart = false;
@@ -70,29 +73,30 @@ namespace LittleGameSever.SeverManager
 
                 if (messages[0].Equals("Up"))
                 {
-                    if (messages[1].Equals("T")) up = true;
-                    if (messages[1].Equals("F")) up = false;
+                    up = bool.Parse(messages[1]);
                 }
                 else if (messages[0].Equals("Down"))
                 {
-                    if (messages[1].Equals("T")) down = true;
-                    if (messages[1].Equals("F")) down = false;
+                    down = bool.Parse(messages[1]); ;
                 }
                 else if (messages[0].Equals("Left"))
                 {
-                    if (messages[1].Equals("T")) left = true;
-                    if (messages[1].Equals("F")) left = false;
+                    left = bool.Parse(messages[1]);
                 }
                 else if (messages[0].Equals("Right"))
                 {
-                    if (messages[1].Equals("T")) right = true;
-                    if (messages[1].Equals("F")) right = false;
+                    right = bool.Parse(messages[1]);
+                }
+                else if (messages[0].Equals("Ready"))
+                {
+                    readyToStart = bool.Parse(messages[1]);
                 }
             }
         }
 
         public bool SendMessage(string message)
         {
+            message += ",";
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
             try
             {
@@ -104,6 +108,35 @@ namespace LittleGameSever.SeverManager
                 return false;
             }
             return true;
+        }
+
+        public void CheckConnection()
+        {
+            bool blockingState = socket.Blocking;
+            try
+            {
+                byte[] tmp = new byte[1];
+
+                socket.Blocking = false;
+                socket.Send(tmp, 0, 0);
+            }
+            catch (SocketException e)
+            {
+                // 10035 == WSAEWOULDBLOCK
+                if (e.NativeErrorCode.Equals(10035))
+                {
+                    Console.WriteLine("Still Connected, but the Send would block");
+                }
+                else
+                {
+                    connected = false;
+                    Console.WriteLine("Disconnected: error code {0}!", e.NativeErrorCode);
+                }
+            }
+            finally
+            {
+                socket.Blocking = blockingState;
+            }
         }
 
         public void Close()
