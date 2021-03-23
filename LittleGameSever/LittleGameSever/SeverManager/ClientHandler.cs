@@ -98,7 +98,7 @@ namespace LittleGameSever.SeverManager
                 }
                 else if (messages[0].Equals("Reload"))
                 {
-                    attack = bool.Parse(messages[1]);
+                    reload = bool.Parse(messages[1]);
                 }
                 else if (messages[0].Equals("Ready"))
                 {

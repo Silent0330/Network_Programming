@@ -110,8 +110,7 @@ namespace LittleGame.Entity
             int x = point.X, y = point.Y, w = width, h = height;
             if(face == UP)
             {
-                h = height + (point.Y - dy);
-                point.Y = dy;
+                h = height + (point.Y - dy);               
             }
             else if (face == DOWN)
             {
@@ -120,7 +119,6 @@ namespace LittleGame.Entity
             else if (face == LEFT)
             {
                 w = width + (point.X - dx);
-                point.X = dx;
             }
             else if (face == RIGHT)
             {

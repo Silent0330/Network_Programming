@@ -106,8 +106,8 @@ namespace LittleGame.Entity
             int l, r, u, d;
 
             //up down
-            l = point.X / TileMap.TILE_SIZE;
-            r = (point.X + width) / TileMap.TILE_SIZE;
+            l = dx / TileMap.TILE_SIZE;
+            r = (dx + width) / TileMap.TILE_SIZE;
             u = dy / TileMap.TILE_SIZE;
             d = (dy + height) / TileMap.TILE_SIZE;
             if (dy >= 0)

@@ -11,6 +11,7 @@ namespace LittleGame.State
         public int playerNum;
         public bool gameOver;
         private System.Windows.Forms.Label winnerLabel;
+        private System.Windows.Forms.Label bulletcountLabel;
 
         private static System.Drawing.Point[] playerPoints =
         {
@@ -47,6 +48,7 @@ namespace LittleGame.State
             players = new ClientPlayer[4];
             clientBullets_List = new List<ClientBullet>();
             gameOver = false;
+            up = down = left = right = attack = reload = false;
 
             //panel
             this.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -72,6 +74,17 @@ namespace LittleGame.State
             this.winnerLabel.Size = new System.Drawing.Size(200, 100);
             this.winnerLabel.Font = new System.Drawing.Font("標楷體", 32F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.winnerLabel.Text = "P1 is winner";
+
+            //bulletcount lable
+            this.bulletcountLabel = new System.Windows.Forms.Label();
+            this.bulletcountLabel.AutoSize = true;
+            this.bulletcountLabel.BackColor = System.Drawing.Color.Transparent;
+            this.bulletcountLabel.Location = new System.Drawing.Point(700, 0);
+            this.bulletcountLabel.Size = new System.Drawing.Size(100, 100);
+            this.bulletcountLabel.Font = new System.Drawing.Font("標楷體", 32F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+
+            this.Controls.Add(bulletcountLabel);
+            bulletcountLabel.BringToFront();
 
             gsm.csm.state = this;
         }
@@ -175,6 +188,7 @@ namespace LittleGame.State
                 {
                     gameOver = true;
                 }
+                this.bulletcountLabel.Text = players[gsm.csm.PlayerId].bulletCount.ToString();
             }
             if (gameOver)
             {

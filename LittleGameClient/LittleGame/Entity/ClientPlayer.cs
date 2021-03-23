@@ -33,7 +33,7 @@ namespace LittleGame.Entity
         public bool Attack { get => attack; set => attack = value; }
         private bool reload;
         public bool Reload { get => reload; set => reload = value; }
-        private int bulletCount;
+        public int bulletCount;
         private int maxBulletCount;
 
         private static System.Drawing.Bitmap[,] images =
@@ -91,6 +91,8 @@ namespace LittleGame.Entity
             this.hp = 1;
             this.attack = false;
             this.reload = true;
+            this.bulletCount = 6;
+            this.maxBulletCount = 6;
 
             LoadImage(images[this.id, this.face]);
             this.state.Controls.Add(pictureBox);
@@ -119,7 +121,7 @@ namespace LittleGame.Entity
         {
             if (alive)
             {
-                if(attack)
+                if (attack)
                 {
                     state.clientBullets_List.Add(new ClientBullet(state, face, point.X, point.Y));
                     bulletCount--;
