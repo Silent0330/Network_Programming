@@ -55,6 +55,7 @@ namespace LittleGame.Entity
             this.left = false;
             this.right = false;
             this.attack = false;
+            this.reload = false;
             this.face = DOWN;
 
             //attack
@@ -168,7 +169,11 @@ namespace LittleGame.Entity
                     if(reload)
                     {
                         reloadingDownCount = reloadingTime;
-                        state.ssm.SendMessage(id, "Reload");
+                        for (int i = 0; i < state.playerNum; i++)
+                        {
+                            state.ssm.SendMessage(i, "Reload," + id.ToString());
+                        }
+                        reload = false;
                     }
                 }
                 else

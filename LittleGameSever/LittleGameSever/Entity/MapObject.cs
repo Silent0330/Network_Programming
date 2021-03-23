@@ -99,9 +99,9 @@ namespace LittleGame.Entity
             }
         }
 
-        protected void CheckMapCollision()
+        protected bool CheckMapCollision()
         {
-
+            bool blocked = false;
             bool leftBlocked, rightBlocked, upBlocked, downBlocked;
             int l, r, u, d;
 
@@ -122,6 +122,7 @@ namespace LittleGame.Entity
             {
                 dy = point.Y;
                 vy = 0;
+                blocked = true;
             }
 
             //left right
@@ -141,7 +142,9 @@ namespace LittleGame.Entity
             {
                 dx = point.X;
                 vx = 0;
+                blocked = true;
             }
+            return blocked;
         }
         
         protected bool SetPosition()

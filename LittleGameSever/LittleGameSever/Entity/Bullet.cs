@@ -20,6 +20,7 @@ namespace LittleGame.Entity
 
         // action
         private int damage;
+        private bool blocked;
 
         public Bullet(PlayingState state, TileMap tileMap, int id, int x, int y, int face)
         {
@@ -41,6 +42,7 @@ namespace LittleGame.Entity
             this.height = 40;
             this.width = 40;
             this.damage = 1;
+            this.blocked = false;
 
             up = down = left = right = false;
             if(face == UP)
@@ -92,6 +94,8 @@ namespace LittleGame.Entity
                         state.ssm.SendMessage(i, "BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
                     }
                 }
+                if (blocked)
+                    end = true;
             }
         }
         
@@ -110,7 +114,8 @@ namespace LittleGame.Entity
             int x = point.X, y = point.Y, w = width, h = height;
             if(face == UP)
             {
-                h = height + (point.Y - dy);               
+                h = height + (point.Y - dy);
+                y = dy;
             }
             else if (face == DOWN)
             {
@@ -119,6 +124,7 @@ namespace LittleGame.Entity
             else if (face == LEFT)
             {
                 w = width + (point.X - dx);
+                x = dx;
             }
             else if (face == RIGHT)
             {
@@ -143,7 +149,7 @@ namespace LittleGame.Entity
         protected new bool Move()
         {
             GetNextPosition();
-            CheckMapCollision();
+            blocked = CheckMapCollision();
             Attack();
             return SetPosition();
         }
