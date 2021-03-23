@@ -23,19 +23,19 @@ namespace LittleGame.State
         };
 
         //move state
-        private bool up;
-        private bool down;
-        private bool left;
-        private bool right;
-        private bool attack;
-        private bool reload;
+        private bool key_up;
+        private bool key_down;
+        private bool key_left;
+        private bool key_right;
+        private bool key_attack;
+        private bool key_reload;
 
-        public bool Up { get => up; }
-        public bool Down { get => down; }
-        public bool Left { get => left; }
-        public bool Right { get => right; }
-        public bool Attack { get => attack; }
-        public bool Reload { get => reload; }
+        public bool Key_Up { get => key_up; }
+        public bool Key_UpDown { get => key_down; }
+        public bool Key_UpLeft { get => key_left; }
+        public bool Key_UpRight { get => key_right; }
+        public bool Key_UpAttack { get => key_attack; }
+        public bool Key_UpReload { get => key_reload; }
 
         private static System.Drawing.Bitmap[] images =
         {
@@ -50,7 +50,7 @@ namespace LittleGame.State
             clientBullets_List = new List<ClientBullet>();
             recivedCommand_List = new List<string>();
             gameOver = false;
-            up = down = left = right = attack = reload = false;
+            key_up = key_down = key_left = key_right = key_attack = key_reload = false;
 
             //panel
             this.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -93,35 +93,35 @@ namespace LittleGame.State
         
         public override void KeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W && !up)
+            if (e.KeyCode == Keys.W && !key_up)
             {
-                up = true;
-                gsm.csm.SendMessage("Up," + up.ToString());
+                key_up = true;
+                gsm.csm.SendMessage("Up," + key_up.ToString());
             }
-            if (e.KeyCode == Keys.S && !down)
+            if (e.KeyCode == Keys.S && !key_down)
             {
-                down = true;
-                gsm.csm.SendMessage("Down," + down.ToString());
+                key_down = true;
+                gsm.csm.SendMessage("Down," + key_down.ToString());
             }
-            if (e.KeyCode == Keys.A && !left)
+            if (e.KeyCode == Keys.A && !key_left)
             {
-                left = true;
-                gsm.csm.SendMessage("Left," + left.ToString());
+                key_left = true;
+                gsm.csm.SendMessage("Left," + key_left.ToString());
             }
-            if (e.KeyCode == Keys.D && !right)
+            if (e.KeyCode == Keys.D && !key_right)
             {
-                right = true;
-                gsm.csm.SendMessage("Right," + right.ToString());
+                key_right = true;
+                gsm.csm.SendMessage("Right," + key_right.ToString());
             }
-            if (e.KeyCode == Keys.Space && !attack)
+            if (e.KeyCode == Keys.Space && !key_attack)
             {
-                attack = true;
-                gsm.csm.SendMessage("Attack," + attack.ToString());
+                key_attack = true;
+                gsm.csm.SendMessage("Attack," + key_attack.ToString());
             }
-            if (e.KeyCode == Keys.R && !reload)
+            if (e.KeyCode == Keys.R && !key_reload)
             {
-                reload = true;
-                gsm.csm.SendMessage("Reload," + reload.ToString());
+                key_reload = true;
+                gsm.csm.SendMessage("Reload," + key_reload.ToString());
             }
 
             if (gameOver && e.KeyCode == Keys.Space)
@@ -133,35 +133,35 @@ namespace LittleGame.State
 
         public override void KeyUp(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.W && up)
+            if (e.KeyCode == Keys.W && key_up)
             {
-                up = false;
-                gsm.csm.SendMessage("Up," + up.ToString());
+                key_up = false;
+                gsm.csm.SendMessage("Up," + key_up.ToString());
             }
-            if (e.KeyCode == Keys.S && down)
+            if (e.KeyCode == Keys.S && key_down)
             {
-                down = false;
-                gsm.csm.SendMessage("Down," + down.ToString());
+                key_down = false;
+                gsm.csm.SendMessage("Down," + key_down.ToString());
             }
-            if (e.KeyCode == Keys.A && left)
+            if (e.KeyCode == Keys.A && key_left)
             {
-                left = false;
-                gsm.csm.SendMessage("Left," + left.ToString());
+                key_left = false;
+                gsm.csm.SendMessage("Left," + key_left.ToString());
             }
-            if (e.KeyCode == Keys.D && right)
+            if (e.KeyCode == Keys.D && key_right)
             {
-                right = false;
-                gsm.csm.SendMessage("Right," + right.ToString());
+                key_right = false;
+                gsm.csm.SendMessage("Right," + key_right.ToString());
             }
-            if (e.KeyCode == Keys.Space && attack)
+            if (e.KeyCode == Keys.Space && key_attack)
             {
-                attack = false;
-                gsm.csm.SendMessage("Attack," + attack.ToString());
+                key_attack = false;
+                gsm.csm.SendMessage("Attack," + key_attack.ToString());
             }
-            if (e.KeyCode == Keys.R && reload)
+            if (e.KeyCode == Keys.R && key_reload)
             {
-                reload = false;
-                gsm.csm.SendMessage("Reload," + reload.ToString());
+                key_reload = false;
+                gsm.csm.SendMessage("Reload," + key_reload.ToString());
             }
         }
 

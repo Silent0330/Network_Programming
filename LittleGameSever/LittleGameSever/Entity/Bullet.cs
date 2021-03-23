@@ -88,7 +88,6 @@ namespace LittleGame.Entity
             {
                 if (Move())
                 {
-                    Console.WriteLine("BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
                     for (int i = 0; i < state.playerNum; i++)
                     {
                         state.ssm.SendMessage(i, "BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
@@ -137,7 +136,7 @@ namespace LittleGame.Entity
         {
             for(int i = 0; i < state.playerNum; i++)
             {
-                if (owner != i && InterSection(GetMoveRectangle(), state.players[i].GetRectangle()))
+                if (owner != i && state.players[i].Alive && InterSection(GetMoveRectangle(), state.players[i].GetRectangle()))
                 {
                     state.players[i].Hited(damage);
                     end = true;

@@ -173,6 +173,10 @@ namespace LittleGame.Sever
                     {
                         state.players[int.Parse(messages[1])].Reload = true;
                     }
+                    else if (messages[0].Equals("Dead"))
+                    {
+                        state.players[int.Parse(messages[1])].SetDead();
+                    }
                     else if (messages[0].Equals("PlayerNum"))
                     {
                         playerNum = int.Parse(messages[1]);

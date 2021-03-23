@@ -117,6 +117,15 @@ namespace LittleGame.Entity
             this.point.Y = y;
         }
 
+        public void SetDead()
+        {
+            if(alive)
+            {
+                alive = false;
+                state.Controls.Remove(this.pictureBox);
+            }
+        }
+
         public void Update()
         {
             if (alive)
