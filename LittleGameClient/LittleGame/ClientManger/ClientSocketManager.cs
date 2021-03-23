@@ -157,13 +157,17 @@ namespace LittleGame.Sever
                     }
                     else if (messages[0].Equals("BulletMove"))
                     {
-                        if(int.Parse(messages[1]) < state.clientBullets_List.Count)
+                        if (int.Parse(messages[1]) < state.clientBullets_List.Count)
                             state.clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                        else
+                            state.recivedCommand_List.Add(message);
                     }
                     else if (messages[0].Equals("BulletRemove"))
                     {
                         if (int.Parse(messages[1]) < state.clientBullets_List.Count)
                             state.clientBullets_List[int.Parse(messages[1])].End = true ;
+                        else
+                            state.recivedCommand_List.Add(message);
                     }
                     else if (messages[0].Equals("Reload"))
                     {

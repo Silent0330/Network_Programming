@@ -8,6 +8,7 @@ namespace LittleGame.State
     {
         public ClientPlayer[] players;
         public List<ClientBullet> clientBullets_List;
+        public List<string> recivedCommand_List;
         public int playerNum;
         public bool gameOver;
         private System.Windows.Forms.Label winnerLabel;
@@ -47,6 +48,7 @@ namespace LittleGame.State
             this.playerNum = gsm.csm.PlayerNum;
             players = new ClientPlayer[4];
             clientBullets_List = new List<ClientBullet>();
+            recivedCommand_List = new List<string>();
             gameOver = false;
             up = down = left = right = attack = reload = false;
 
@@ -174,6 +176,24 @@ namespace LittleGame.State
                 for (int i = 0; i < playerNum; i++)
                 {
                     players[i].Update();
+                }
+                for(int i = 0; i < 10 && recivedCommand_List.Count > 0; i++)
+                {
+                    string[] messages = recivedCommand_List[0].Split(',');
+                    if (messages[0].Equals("BulletMove"))
+                    {
+                        if (int.Parse(messages[1]) < clientBullets_List.Count)
+                            clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                        else
+                            break;
+                    }
+                    else if (messages[0].Equals("BulletRemove"))
+                    {
+                        if (int.Parse(messages[1]) < clientBullets_List.Count)
+                            clientBullets_List[int.Parse(messages[1])].End = true;
+                        else
+                            break;
+                    }
                 }
                 for (int i = 0; i < clientBullets_List.Count; i++)
                 {
