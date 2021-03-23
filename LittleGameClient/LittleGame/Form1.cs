@@ -25,7 +25,7 @@ namespace LittleGame
             gsm = new GameStateManager(this, csm);
 
             timer = new System.Windows.Forms.Timer();
-            this.timer.Interval = 100;
+            this.timer.Interval = 1;
             this.timer.Tick += new System.EventHandler(this.loop);
             this.timer.Enabled = true;
             this.timer.Start();

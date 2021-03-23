@@ -35,7 +35,9 @@ namespace LittleGame.TileMaps
 
         public bool getBlocked(int row, int col)
         {
-            return tiles[row,col].getBlocked() || (objMap[row, col] != 0);
+            if(row >= 0 && row < numRows && col >= 0 && col < numCols)
+                return tiles[row,col].getBlocked() || (objMap[row, col] != 0);
+            return true;
         }
 
         public int getTileType(int row, int col)

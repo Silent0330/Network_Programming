@@ -1,9 +1,5 @@
-﻿using LittleGame.Client;
-using System;
+﻿using LittleGame.Entity;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LittleGame.State
@@ -11,6 +7,7 @@ namespace LittleGame.State
     class ClientPlayingState : GameState
     {
         public ClientPlayer[] players;
+        public List<ClientBullet> clientBullets_List;
         public int playerNum;
         public bool gameOver;
         private System.Windows.Forms.Label winnerLabel;
@@ -29,23 +26,26 @@ namespace LittleGame.State
         private bool left;
         private bool right;
         private bool attack;
+        private bool reload;
 
-        public bool getUp() { return up; }
-        public bool getDown() { return down; }
-        public bool getLeft() { return left; }
-        public bool getRight() { return right; }
-        public bool getAttack() { return attack; }
+        public bool Up { get => up; }
+        public bool Down { get => down; }
+        public bool Left { get => left; }
+        public bool Right { get => right; }
+        public bool Attack { get => attack; }
+        public bool Reload { get => reload; }
 
         private static System.Drawing.Bitmap[] images =
         {
-            global::LittleGame.Properties.Resources.Map1_1
+            Properties.Resources.Map1_1
         };
 
         public ClientPlayingState(State.GameStateManager gsm)
         {
             this.gsm = gsm;
             this.playerNum = gsm.csm.PlayerNum;
-            players = new Client.ClientPlayer[4];
+            players = new ClientPlayer[4];
+            clientBullets_List = new List<ClientBullet>();
             gameOver = false;
 
             //panel
@@ -103,6 +103,11 @@ namespace LittleGame.State
                 attack = true;
                 gsm.csm.SendMessage("Attack," + attack.ToString());
             }
+            if (e.KeyCode == Keys.R && !reload)
+            {
+                reload = true;
+                gsm.csm.SendMessage("Reload," + reload.ToString());
+            }
 
             if (gameOver && e.KeyCode == Keys.Space)
             {
@@ -138,6 +143,11 @@ namespace LittleGame.State
                 attack = false;
                 gsm.csm.SendMessage("Attack," + attack.ToString());
             }
+            if (e.KeyCode == Keys.R && reload)
+            {
+                reload = false;
+                gsm.csm.SendMessage("Reload," + reload.ToString());
+            }
         }
 
         public override void Update()
@@ -151,6 +161,15 @@ namespace LittleGame.State
                 for (int i = 0; i < playerNum; i++)
                 {
                     players[i].Update();
+                }
+                for (int i = 0; i < clientBullets_List.Count; i++)
+                {
+                    clientBullets_List[i].Update();
+                    if(clientBullets_List[i].End)
+                    {
+                        clientBullets_List[i].Dispose();
+                        clientBullets_List.RemoveAt(i);
+                    }
                 }
                 if (!gsm.csm.GameStart)
                 {

@@ -284,5 +284,17 @@
   <ItemGroup>
     <None Include="Resources\tree4.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bulletdown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bulletleft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bulletright.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bulletup.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

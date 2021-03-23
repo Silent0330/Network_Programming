@@ -307,4 +307,16 @@
   <data name="tree4" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\tree4.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="bulletdown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bulletdown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bulletleft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bulletleft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bulletright" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bulletright.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="bulletup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bulletup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

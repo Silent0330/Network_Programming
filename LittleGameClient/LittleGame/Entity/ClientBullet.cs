@@ -1,42 +1,37 @@
 ﻿using LittleGame.State;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LittleGame.Entity
-{ 
+{
     class ClientBullet
     {
         private ClientPlayingState state;
         private System.Windows.Forms.PictureBox pictureBox;
         public System.Drawing.Point point;
-        private int speed;
-        private bool exist;
+
+        private bool end;
+        public bool End { get => end; set => end = value; }
         private int direction;
+        public int Direction { get => direction; set => direction = value; }
         public const int UP = 0;
         public const int DOWN = 1;
         public const int LEFT = 2;
         public const int RIGHT = 3;
         private static System.Drawing.Bitmap[] images =
         {
-            {
-                global::LittleGame.Properties.Resources.bulletup,
-                global::LittleGame.Properties.Resources.bulletdown,
-                global::LittleGame.Properties.Resources.bulletleft,
-                global::LittleGame.Properties.Resources.bulletright
-            }
+            Properties.Resources.bulletup,
+            Properties.Resources.bulletdown,
+            Properties.Resources.bulletleft,
+            Properties.Resources.bulletright
         };
 
-        public ClientBullet(State.ClientPlayingState state, int x, int y)
+        public ClientBullet(State.ClientPlayingState state, int face, int x, int y)
         {
             this.state = state;
             pictureBox = new System.Windows.Forms.PictureBox();
             this.point = new System.Drawing.Point(x, y);
-            this.speed = 100;
-            this.exist = true;
-            this.direction = DOWN;
+            this.end = false;
+            this.direction = face;
 
             LoadImage(images[this.direction]);
             this.state.Controls.Add(pictureBox);
@@ -59,16 +54,16 @@ namespace LittleGame.Entity
         {
             this.point.X = x;
             this.point.Y = y;
-            Console.WriteLine(point);
         }
 
-        public void SetDirection(int dir)
+        public void Dispose()
         {
-            this.direction = dir;
+            state.Controls.Remove(this.pictureBox);
         }
+
         public void Update()
         {
-            if (exist)
+            if (!end)
             {
                 LoadImage(images[direction]);
                 pictureBox.BringToFront();

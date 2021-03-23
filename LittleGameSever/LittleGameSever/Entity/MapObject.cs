@@ -14,25 +14,39 @@ namespace LittleGame.Entity
         protected PlayingState state;
         protected TileMap tileMap;
 
-        //position
+        //position and move
         protected System.Drawing.Point point;
         protected int height, width;
         protected int vx, vy;
-        protected int speed = 5;
+        protected int stepSize = 5;
         protected int dx, dy;
+        protected int moveDelay;
+        protected int moveSpeed;
 
-        //move state
+        //control
         protected bool up;
         protected bool down;
         protected bool left;
         protected bool right;
-        protected int  moveDelay;
         
 
         public bool Up{ get { return up; } set { up = value; } }
         public bool Down { get { return down; } set { down = value; } }
         public bool Left { get { return left; } set { left = value; } }
         public bool Right { get { return right; } set { right = value; } }
+
+        // action
+        protected int face;
+        public int Face { get { return face; } }
+
+        public const int UP = 0;
+        public const int DOWN = 1;
+        public const int LEFT = 2;
+        public const int RIGHT = 3;
+        public const int MOVEUP = 4;
+        public const int MOVEDOWN = 5;
+        public const int MOVELEFT = 6;
+        public const int MOVERIGHT = 7;
 
         public Rectangle GetRectangle()
         {
@@ -46,6 +60,11 @@ namespace LittleGame.Entity
             return rec1.IntersectsWith(rec2);
         }
 
+        public bool InterSection(Rectangle rec1, Rectangle rec2)
+        {
+            return rec1.IntersectsWith(rec2);
+        }
+
         public void GetNextPosition()
         {
             if (moveDelay == 0)
@@ -54,7 +73,7 @@ namespace LittleGame.Entity
                 dx = point.X + vx;
                 dy = point.Y + vy;
                 if (vx != 0 || vy != 0)
-                    moveDelay = 4;
+                    moveDelay = moveSpeed;
             }
             else moveDelay--;
         }
@@ -64,19 +83,19 @@ namespace LittleGame.Entity
             vx = vy = 0;
             if (up)
             {
-                vy -= speed;
+                vy -= stepSize;
             }
             if (down)
             {
-                vy += speed;
+                vy += stepSize;
             }
             if (left)
             {
-                vx -= speed;
+                vx -= stepSize;
             }
             if (right)
             {
-                vx += speed;
+                vx += stepSize;
             }
         }
 

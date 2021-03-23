@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LittleGame.Client
+namespace LittleGame.Entity
 {
     class ClientPlayer
     {
@@ -19,6 +19,7 @@ namespace LittleGame.Client
 
         //action
         private int face;
+        public int Face { get => face; set => face = value; }
         public const int UP = 0;
         public const int DOWN = 1;
         public const int LEFT = 2;
@@ -28,47 +29,54 @@ namespace LittleGame.Client
         public const int MOVELEFT = 6;
         public const int MOVERIGHT = 7;
 
+        private bool attack;
+        public bool Attack { get => attack; set => attack = value; }
+        private bool reload;
+        public bool Reload { get => reload; set => reload = value; }
+        private int bulletCount;
+        private int maxBulletCount;
+
         private static System.Drawing.Bitmap[,] images =
         {
             {
-                global::LittleGame.Properties.Resources.p1up,
-                global::LittleGame.Properties.Resources.p1down,
-                global::LittleGame.Properties.Resources.p1left,
-                global::LittleGame.Properties.Resources.p1right,
-                global::LittleGame.Properties.Resources.p1moveup,
-                global::LittleGame.Properties.Resources.p1movedown,
-                global::LittleGame.Properties.Resources.p1moveleft,
-                global::LittleGame.Properties.Resources.p1moveright
+                Properties.Resources.p1up,
+                Properties.Resources.p1down,
+                Properties.Resources.p1left,
+                Properties.Resources.p1right,
+                Properties.Resources.p1moveup,
+                Properties.Resources.p1movedown,
+                Properties.Resources.p1moveleft,
+                Properties.Resources.p1moveright
             },
             {
-                global::LittleGame.Properties.Resources.p2up,
-                global::LittleGame.Properties.Resources.p2down,
-                global::LittleGame.Properties.Resources.p2left,
-                global::LittleGame.Properties.Resources.p2right,
-                global::LittleGame.Properties.Resources.p2moveup,
-                global::LittleGame.Properties.Resources.p2movedown,
-                global::LittleGame.Properties.Resources.p2moveleft,
-                global::LittleGame.Properties.Resources.p2moveright
+                Properties.Resources.p2up,
+                Properties.Resources.p2down,
+                Properties.Resources.p2left,
+                Properties.Resources.p2right,
+                Properties.Resources.p2moveup,
+                Properties.Resources.p2movedown,
+                Properties.Resources.p2moveleft,
+                Properties.Resources.p2moveright
             },
             {
-                global::LittleGame.Properties.Resources.p3up,
-                global::LittleGame.Properties.Resources.p3down,
-                global::LittleGame.Properties.Resources.p3left,
-                global::LittleGame.Properties.Resources.p3right,
-                global::LittleGame.Properties.Resources.p3moveup,
-                global::LittleGame.Properties.Resources.p3movedown,
-                global::LittleGame.Properties.Resources.p3moveleft,
-                global::LittleGame.Properties.Resources.p3moveright,
+                Properties.Resources.p3up,
+                Properties.Resources.p3down,
+                Properties.Resources.p3left,
+                Properties.Resources.p3right,
+                Properties.Resources.p3moveup,
+                Properties.Resources.p3movedown,
+                Properties.Resources.p3moveleft,
+                Properties.Resources.p3moveright,
             },
             {
-                global::LittleGame.Properties.Resources.p4up,
-                global::LittleGame.Properties.Resources.p4down,
-                global::LittleGame.Properties.Resources.p4left,
-                global::LittleGame.Properties.Resources.p4right,
-                global::LittleGame.Properties.Resources.p4moveup,
-                global::LittleGame.Properties.Resources.p4movedown,
-                global::LittleGame.Properties.Resources.p4moveleft,
-                global::LittleGame.Properties.Resources.p4moveright
+                Properties.Resources.p4up,
+                Properties.Resources.p4down,
+                Properties.Resources.p4left,
+                Properties.Resources.p4right,
+                Properties.Resources.p4moveup,
+                Properties.Resources.p4movedown,
+                Properties.Resources.p4moveleft,
+                Properties.Resources.p4moveright
             }
         };
 
@@ -81,6 +89,8 @@ namespace LittleGame.Client
             this.face = DOWN;
             this.point = new System.Drawing.Point(x, y);
             this.hp = 1;
+            this.attack = false;
+            this.reload = true;
 
             LoadImage(images[this.id, this.face]);
             this.state.Controls.Add(pictureBox);
@@ -98,37 +108,28 @@ namespace LittleGame.Client
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
         }
-        
-
-        public void Hited(int damage)
-        {
-            if (alive)
-            {
-                hp -= damage;
-                if(hp <= 0)
-                {
-                    alive = false;
-                    this.state.Controls.Remove(pictureBox);
-                }
-            }
-        }
 
         public void SetPoint(int x, int y)
         {
             this.point.X = x;
             this.point.Y = y;
-            Console.WriteLine(point);
         }
 
-        public void SetFace(int face)
-        {
-            this.face = face;
-        }
-        
         public void Update()
         {
             if (alive)
             {
+                if(attack)
+                {
+                    state.clientBullets_List.Add(new ClientBullet(state, face, point.X, point.Y));
+                    bulletCount--;
+                    attack = false;
+                }
+                if(reload)
+                {
+                    bulletCount = maxBulletCount;
+                    reload = false;
+                }
                 LoadImage(images[id, face]);
                 pictureBox.BringToFront();
             }

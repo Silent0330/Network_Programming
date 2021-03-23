@@ -15,9 +15,9 @@ namespace LittleGame.TileMap
         //tile images
         private static System.Drawing.Bitmap[] tileImages =
         {
-            global::LittleGame.Properties.Resources.grass,
-            global::LittleGame.Properties.Resources.block1
-    };
+            Properties.Resources.grass,
+            Properties.Resources.block1
+        };
 
         private int tileType;
         private bool blocked;

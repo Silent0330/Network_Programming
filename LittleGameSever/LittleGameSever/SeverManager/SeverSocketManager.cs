@@ -79,18 +79,19 @@ namespace LittleGame.SeverManager
         {
             for (int i = clientHandler_List.Count-1; i >= 0; i--)
             {
-                clientHandler_List[i].CheckConnection();
+                if(clientHandler_List[i].Connected)
+                    clientHandler_List[i].CheckConnection();
                 if (!clientHandler_List[i].Connected)
                 {
                     try
                     {
                         form.log_List.Enqueue("client #id : " + IPAddress.Parse(((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Address.ToString()) + "  #port : " + ((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Port.ToString() + Environment.NewLine + " disconnect ");
                         clientHandler_List[i].Close();
-                        clientHandler_List.RemoveAt(i);
-                        clientId_List.RemoveAt(i);
                         if(!form.Playing)
                         {
-                            for(int j = i; j < clientHandler_List.Count; j++)
+                            clientHandler_List.RemoveAt(i);
+                            clientId_List.RemoveAt(i);
+                            for (int j = i; j < clientHandler_List.Count; j++)
                             {
                                 clientHandler_List[j].ChangeId(j);
                                 clientId_List[j] = j;

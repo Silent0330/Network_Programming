@@ -30,6 +30,10 @@ namespace LittleGameSever.SeverManager
         public bool Left { get => left; }
         private bool right;
         public bool Right { get => right; }
+        private bool attack;
+        public bool Attack { get => attack; }
+        private bool reload;
+        public bool Reload { get => reload; }
 
 
         public ClientHandler(int clientId, Socket clientSocket)
@@ -66,6 +70,7 @@ namespace LittleGameSever.SeverManager
                 catch (System.Exception e)
                 {
                     Console.WriteLine(e.Data);
+                    connected = false;
                     break;
                 }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
@@ -87,6 +92,14 @@ namespace LittleGameSever.SeverManager
                 {
                     right = bool.Parse(messages[1]);
                 }
+                else if (messages[0].Equals("Attack"))
+                {
+                    attack = bool.Parse(messages[1]);
+                }
+                else if (messages[0].Equals("Reload"))
+                {
+                    attack = bool.Parse(messages[1]);
+                }
                 else if (messages[0].Equals("Ready"))
                 {
                     readyToStart = bool.Parse(messages[1]);
@@ -96,28 +109,32 @@ namespace LittleGameSever.SeverManager
 
         public bool SendMessage(string message)
         {
-            message += ",";
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
-            try
+            if(connected)
             {
-                socket.Send(bytes);
+                message += ",";
+                byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
+                try
+                {
+                    socket.Send(bytes);
+                    Thread.Sleep(5);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    connected = false;
+                    return false;
+                }
+                return true;
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                return false;
-            }
-            return true;
+            return false;
         }
 
         public void CheckConnection()
         {
-            bool blockingState = socket.Blocking;
             try
             {
                 byte[] tmp = new byte[1];
-
-                socket.Blocking = false;
+                
                 socket.Send(tmp, 0, 0);
             }
             catch (SocketException e)
@@ -132,10 +149,6 @@ namespace LittleGameSever.SeverManager
                     connected = false;
                     Console.WriteLine("Disconnected: error code {0}!", e.NativeErrorCode);
                 }
-            }
-            finally
-            {
-                socket.Blocking = blockingState;
             }
         }
 

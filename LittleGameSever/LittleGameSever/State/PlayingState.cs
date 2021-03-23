@@ -48,6 +48,8 @@ namespace LittleGame.State
             this.ssm = ssm;
             this.tileMap = new TileMap(maps[0]);
             this.players = new Player[maxPlayerNum];
+            this.bullet_List = new List<Bullet>();
+
             this.playerNum = player_num;
             for (int i = 0; i < playerNum; i++)
             {
@@ -65,6 +67,20 @@ namespace LittleGame.State
                 for (int i = 0; i < playerNum; i++)
                 {
                     players[i].Update();
+                }
+                for (int i = 0; i < bullet_List.Count; i++)
+                {
+                    bullet_List[i].Update(i);
+                    if(bullet_List[i].End)
+                    {
+                        bullet_List[i].Dispose();
+                        bullet_List.RemoveAt(i);
+                        for (int j = 0; j < playerNum; j++)
+                        {
+                            ssm.SendMessage(j, "BulletRemove," + i.ToString());
+                        }
+                        i--;
+                    }
                 }
                 if (aliveNum <= 1)
                 {

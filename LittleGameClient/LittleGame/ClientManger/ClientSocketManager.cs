@@ -86,15 +86,15 @@ namespace LittleGame.Sever
             gameStart = false;
             try
             {
-                if(recvThread != null)
-                {
-                    recvThread.Abort();
-                    recvThread = null;
-                }
-                if(clientSocket != null)
+                if (clientSocket != null)
                 {
                     clientSocket.Close();
                     clientSocket = null;
+                }
+                if (recvThread != null)
+                {
+                    recvThread.Abort();
+                    recvThread = null;
                 }
             }
             catch (Exception e)
@@ -112,6 +112,7 @@ namespace LittleGame.Sever
                 try
                 {
                     clientSocket.Send(System.Text.Encoding.UTF8.GetBytes(message));
+                    Thread.Sleep(5);
                 }
                 catch (Exception e)
                 {
@@ -148,7 +149,25 @@ namespace LittleGame.Sever
                     }
                     else if (messages[0].Equals("Face"))
                     {
-                        state.players[int.Parse(messages[1])].SetFace(int.Parse(messages[2]));
+                        state.players[int.Parse(messages[1])].Face = int.Parse(messages[2]);
+                    }
+                    else if (messages[0].Equals("Attack"))
+                    {
+                        state.players[int.Parse(messages[1])].Attack = true;
+                    }
+                    else if (messages[0].Equals("BulletMove"))
+                    {
+                        if(int.Parse(messages[1]) < state.clientBullets_List.Count)
+                            state.clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                    }
+                    else if (messages[0].Equals("BulletRemove"))
+                    {
+                        if (int.Parse(messages[1]) < state.clientBullets_List.Count)
+                            state.clientBullets_List[int.Parse(messages[1])].End = true ;
+                    }
+                    else if (messages[0].Equals("Reload"))
+                    {
+                        state.players[int.Parse(messages[1])].Reload = true;
                     }
                     else if (messages[0].Equals("PlayerNum"))
                     {
@@ -158,6 +177,7 @@ namespace LittleGame.Sever
                     {
                         gameStart = false;
                     }
+                    Thread.Sleep(10);
                 }
                 catch (Exception e)
                 {
