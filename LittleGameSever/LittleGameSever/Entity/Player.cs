@@ -147,7 +147,7 @@ namespace LittleGame.Entity
                 {
                     if (bulletCount > 0 && attackDelay == 0)
                     {
-                        state.bullet_List.Add(new Bullet(state, tileMap, id, point.X + width / 2, point.Y + height / 2, face));
+                        state.bullet_List.Add(new Bullet(state, tileMap, id, face, point.X + width / 2, point.Y + height / 2));
                         bulletCount--;
                         attackDelay = attackSpeed;
                         for (int i = 0; i < state.playerNum; i++)

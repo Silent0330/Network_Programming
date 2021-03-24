@@ -22,7 +22,7 @@ namespace LittleGame.Entity
         private int damage;
         private bool blocked;
 
-        public Bullet(PlayingState state, TileMap tileMap, int id, int x, int y, int face)
+        public Bullet(PlayingState state, TileMap tileMap, int id, int face, int x, int y)
         {
             // parants
             this.state = state;
@@ -69,7 +69,7 @@ namespace LittleGame.Entity
             }
 
             // end
-            this.endTime = 10;
+            this.endTime = 20;
             this.end = false;
             this.timer = new System.Timers.Timer(100);
             this.timer.Elapsed += count;

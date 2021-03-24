@@ -12,6 +12,7 @@ namespace LittleGame.Entity
         private ClientPlayingState state;
         private System.Windows.Forms.PictureBox pictureBox;
         public System.Drawing.Point point;
+        public System.Drawing.Size size;
         private int id;
         private bool alive;
         public bool Alive { get => alive; }
@@ -90,6 +91,7 @@ namespace LittleGame.Entity
             this.alive = true;
             this.face = DOWN;
             this.point = new System.Drawing.Point(x, y);
+            this.size = new System.Drawing.Size(50, 50);
             this.hp = 1;
             this.attack = false;
             this.reload = false;
@@ -108,7 +110,7 @@ namespace LittleGame.Entity
             this.pictureBox.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox.Location = point;
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(50, 50);
+            this.pictureBox.Size = size;
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
@@ -135,7 +137,7 @@ namespace LittleGame.Entity
             {
                 if (attack)
                 {
-                    state.clientBullets_List.Add(new ClientBullet(state, face, point.X, point.Y));
+                    state.clientBullets_List.Add(new ClientBullet(state, face, point.X + size.Width / 2, point.Y + size.Height / 2));
                     bulletCount--;
                     attack = false;
                 }

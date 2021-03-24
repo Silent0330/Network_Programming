@@ -42,7 +42,7 @@ namespace LittleGameSever.SeverManager
         private bool reload;
         public bool Reload { get => reload; }
         private bool startGameRequest;
-        public bool StartGameRequest { get => startGameRequest; }
+        public bool StartGameRequest { get => startGameRequest; set => startGameRequest = value; }
 
 
         public ClientHandler(int clientId, Socket clientSocket)

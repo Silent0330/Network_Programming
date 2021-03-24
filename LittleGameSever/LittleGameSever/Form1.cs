@@ -59,10 +59,14 @@ namespace LittleGameSever
             }
             if(!playing)
             {
-                if(ssm.CurConnectionNum > 1 && ssm.clientHandler_List[0].StartGameRequest)
+                if(ssm.CurConnectionNum > 0 && ssm.clientHandler_List[0].StartGameRequest)
                 {
-                    playing = true;
-                    StartGame();
+                    if(ssm.CurConnectionNum > 1)
+                    {
+                        playing = true;
+                        StartGame();
+                    }
+                    ssm.clientHandler_List[0].StartGameRequest = false;
                 }
             }
             if(playing)
