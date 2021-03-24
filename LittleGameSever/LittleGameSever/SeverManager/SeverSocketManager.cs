@@ -85,8 +85,12 @@ namespace LittleGame.SeverManager
                 {
                     try
                     {
-                        form.log_List.Enqueue("client #id : " + IPAddress.Parse(((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Address.ToString()) + "  #port : " + ((IPEndPoint)clientHandler_List[i].Sockeet.RemoteEndPoint).Port.ToString() + Environment.NewLine + " disconnect ");
-                        clientHandler_List[i].Close();
+                        if(!clientHandler_List[i].DisConnectChecked)
+                        {
+                            form.log_List.Enqueue("client #id : " + clientHandler_List[i].Ip.ToString() + "  #port : " + clientHandler_List[i].Port.ToString() + " disconnect " + Environment.NewLine);
+                            clientHandler_List[i].Close();
+                            CurConnectionNum = curConnectionNum - 1;
+                        }
                         if(!form.Playing)
                         {
                             clientHandler_List.RemoveAt(i);
@@ -97,7 +101,6 @@ namespace LittleGame.SeverManager
                                 clientId_List[j] = j;
                             }
                         }
-                        CurConnectionNum = curConnectionNum - 1;
                         break;
                     }
                     catch (Exception exception)

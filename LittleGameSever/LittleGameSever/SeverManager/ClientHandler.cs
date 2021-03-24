@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -11,12 +12,18 @@ namespace LittleGameSever.SeverManager
     class ClientHandler
     {
         private Socket socket;
-        public Socket Sockeet { get => socket; }
+        public Socket Socket { get => socket; }
         private int id;
         private Thread recvThread;
 
         private bool connected;
         public bool Connected { get => connected; }
+        private bool disConnectChecked;
+        public bool DisConnectChecked { get => disConnectChecked; }
+        private IPAddress ip;
+        public IPAddress Ip { get => ip; }
+        private int port;
+        public int Port { get => port; }
 
         private bool readyToStart;
         public bool ReadyToStart { get => readyToStart; }
@@ -34,17 +41,24 @@ namespace LittleGameSever.SeverManager
         public bool Attack { get => attack; }
         private bool reload;
         public bool Reload { get => reload; }
+        private bool startGameRequest;
+        public bool StartGameRequest { get => startGameRequest; }
 
 
         public ClientHandler(int clientId, Socket clientSocket)
         {
             this.id = clientId;
-            socket = clientSocket;
+            this.socket = clientSocket;
+            this.ip = IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString());
+            this.port = ((IPEndPoint)socket.RemoteEndPoint).Port;
 
             up = down = left = right = false;
 
+
             connected = true;
+            disConnectChecked = false;
             readyToStart = false;
+            startGameRequest = false;
 
             recvThread = new Thread(RecvMessage);
             recvThread.IsBackground = true;
@@ -99,6 +113,10 @@ namespace LittleGameSever.SeverManager
                 else if (messages[0].Equals("Reload"))
                 {
                     reload = bool.Parse(messages[1]);
+                }
+                else if (messages[0].Equals("StartGame"))
+                {
+                    startGameRequest = true;
                 }
                 else if (messages[0].Equals("Ready"))
                 {
@@ -155,6 +173,7 @@ namespace LittleGameSever.SeverManager
         public void Close()
         {
             connected = false;
+            disConnectChecked = true;
             if (socket != null)
             {
                 socket.Shutdown(SocketShutdown.Both);

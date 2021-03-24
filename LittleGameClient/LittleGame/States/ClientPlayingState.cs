@@ -208,7 +208,14 @@ namespace LittleGame.State
                 {
                     gameOver = true;
                 }
-                this.bulletcountLabel.Text = players[gsm.csm.PlayerId].bulletCount.ToString();
+                if(players[gsm.csm.PlayerId].Reload && !players[gsm.csm.PlayerId].ReloadDone)
+                {
+                    this.bulletcountLabel.Text = "R";
+                }
+                else
+                {
+                    this.bulletcountLabel.Text = players[gsm.csm.PlayerId].bulletCount.ToString();
+                }
             }
             if (gameOver)
             {

@@ -57,6 +57,14 @@ namespace LittleGameSever
             {
                 txtBox_Log.AppendText(log_List.Dequeue());
             }
+            if(!playing)
+            {
+                if(ssm.CurConnectionNum > 1 && ssm.clientHandler_List[0].StartGameRequest)
+                {
+                    playing = true;
+                    StartGame();
+                }
+            }
             if(playing)
             {
                 playingState.Update();
@@ -104,6 +112,11 @@ namespace LittleGameSever
         }
 
         private void button_StartGame_Click(object sender, EventArgs e)
+        {
+            StartGame();
+        }
+
+        private void StartGame()
         {
             ssm.StopListeing();
             for (int i = 0; i < ssm.CurConnectionNum; i++)
@@ -158,7 +171,7 @@ namespace LittleGameSever
             btn_StopSever.Enabled = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_Exit_Click(object sender, EventArgs e)
         {
             Close();
         }

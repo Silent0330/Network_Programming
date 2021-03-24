@@ -8,6 +8,7 @@ namespace LittleGame.Entity
         private ClientPlayingState state;
         private System.Windows.Forms.PictureBox pictureBox;
         public System.Drawing.Point point;
+        public System.Drawing.Size size;
 
         private bool end;
         public bool End { get => end; set => end = value; }
@@ -33,6 +34,15 @@ namespace LittleGame.Entity
             this.end = false;
             this.direction = face;
 
+            if(direction == UP || direction == DOWN)
+            {
+                size = new System.Drawing.Size(5, 20);
+            }
+            else if (direction == LEFT || direction == RIGHT)
+            {
+                size = new System.Drawing.Size(20, 5);
+            }
+
             LoadImage(images[this.direction]);
             this.state.Controls.Add(pictureBox);
             pictureBox.BringToFront();
@@ -44,7 +54,7 @@ namespace LittleGame.Entity
             this.pictureBox.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox.Location = point;
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(50, 50);
+            this.pictureBox.Size = size;
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;

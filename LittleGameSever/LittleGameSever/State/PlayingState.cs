@@ -97,6 +97,10 @@ namespace LittleGame.State
                         ssm.SendMessage(i, "GameOver");
                     }
                 }
+                if(ssm.CurConnectionNum < 1)
+                {
+                    gameOver = true;
+                }
             }
         }
     }

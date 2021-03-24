@@ -39,27 +39,33 @@ namespace LittleGame.Entity
 
             // action
             this.face = face;
-            this.height = 40;
-            this.width = 40;
             this.damage = 1;
             this.blocked = false;
 
-            up = down = left = right = false;
+            key_up = key_down = key_left = key_right = false;
             if(face == UP)
             {
-                up = true;
+                key_up = true;
+                this.height = 20;
+                this.width = 5;
             }
             else if (face == DOWN)
             {
-                down = true;
+                key_down = true;
+                this.height = 20;
+                this.width = 5;
             }
             else if (face == LEFT)
             {
-                left = true;
+                key_left = true;
+                this.height = 5;
+                this.width = 20;
             }
             else if (face == RIGHT)
             {
-                right = true;
+                key_right = true;
+                this.height = 5;
+                this.width = 20;
             }
 
             // end

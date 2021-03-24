@@ -19,10 +19,10 @@ namespace LittleGame.Entity
         public int Hp { get => hp; }
 
         // attack
-        private bool attack;
-        public bool Attack { get => attack; }
-        private bool reload;
-        public bool Reload { get => reload; }
+        private bool key_attack;
+        public bool Key_Attack { get => key_attack; }
+        private bool key_reload;
+        public bool Key_Reload { get => key_reload; }
         private int attackDelay;
         private int attackSpeed;
         private int bulletCount;
@@ -50,12 +50,12 @@ namespace LittleGame.Entity
             this.hp = 1;
 
             //action
-            this.up = false;
-            this.down = false;
-            this.left = false;
-            this.right = false;
-            this.attack = false;
-            this.reload = false;
+            this.key_up = false;
+            this.key_down = false;
+            this.key_left = false;
+            this.key_right = false;
+            this.key_attack = false;
+            this.key_reload = false;
             this.face = DOWN;
 
             //attack
@@ -63,7 +63,7 @@ namespace LittleGame.Entity
             this.attackDelay = 0;
             this.maxBulletCount = 6;
             this.bulletCount = maxBulletCount;
-            this.reloadingTime = 10;
+            this.reloadingTime = 100;
             this.reloadingDownCount = 0;
 
             //rectangle
@@ -91,7 +91,7 @@ namespace LittleGame.Entity
         
         public bool SetAction()
         {
-            if (up)
+            if (key_up)
             {
                 if(face != UP)
                 {
@@ -99,7 +99,7 @@ namespace LittleGame.Entity
                     return true;
                 }
             }
-            else if (down)
+            else if (key_down)
             {
                 if (face != DOWN)
                 {
@@ -107,7 +107,7 @@ namespace LittleGame.Entity
                     return true;
                 }
             }
-            else if (left)
+            else if (key_left)
             {
                 if (face != LEFT)
                 {
@@ -115,7 +115,7 @@ namespace LittleGame.Entity
                     return true;
                 }
             }
-            else if (right)
+            else if (key_right)
             {
                 if (face != RIGHT)
                 {
@@ -130,13 +130,59 @@ namespace LittleGame.Entity
         {
             if(id < state.ssm.clientHandler_List.Count && state.ssm.clientHandler_List[id].Connected)
             {
-                up = state.ssm.clientHandler_List[id].Up;
-                down = state.ssm.clientHandler_List[id].Down;
-                left = state.ssm.clientHandler_List[id].Left;
-                right = state.ssm.clientHandler_List[id].Right;
-                attack = state.ssm.clientHandler_List[id].Attack;
-                reload = state.ssm.clientHandler_List[id].Reload;
+                key_up = state.ssm.clientHandler_List[id].Up;
+                key_down = state.ssm.clientHandler_List[id].Down;
+                key_left = state.ssm.clientHandler_List[id].Left;
+                key_right = state.ssm.clientHandler_List[id].Right;
+                key_attack = state.ssm.clientHandler_List[id].Attack;
+                key_reload = state.ssm.clientHandler_List[id].Reload;
             }
+        }
+
+        public void Attack()
+        {
+            if (reloadingDownCount == 0)
+            {
+                if (key_attack)
+                {
+                    if (bulletCount > 0 && attackDelay == 0)
+                    {
+                        state.bullet_List.Add(new Bullet(state, tileMap, id, point.X + width / 2, point.Y + height / 2, face));
+                        bulletCount--;
+                        attackDelay = attackSpeed;
+                        for (int i = 0; i < state.playerNum; i++)
+                        {
+                            state.ssm.SendMessage(i, "Attack," + id.ToString());
+                        }
+                    }
+                }
+                if (key_reload)
+                {
+                    if(bulletCount != maxBulletCount)
+                    {
+                        reloadingDownCount = reloadingTime;
+                        for (int i = 0; i < state.playerNum; i++)
+                        {
+                            state.ssm.SendMessage(i, "Reload," + id.ToString());
+                        }
+                    }
+                    key_reload = false;
+                }
+            }
+            else
+            {
+                reloadingDownCount--;
+                if (reloadingDownCount == 0)
+                {
+                    bulletCount = maxBulletCount;
+                    for (int i = 0; i < state.playerNum; i++)
+                    {
+                        state.ssm.SendMessage(i, "ReloadDone," + id.ToString());
+                    }
+                }
+            }
+            if (attackDelay > 0)
+                attackDelay--;
         }
 
         public void Update()
@@ -151,39 +197,7 @@ namespace LittleGame.Entity
                         state.ssm.SendMessage(i, "Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
                     }
                 }
-                if(reloadingDownCount == 0)
-                {
-                    if (attack)
-                    {
-                        if(bulletCount > 0 && attackDelay == 0)
-                        {
-                            state.bullet_List.Add(new Bullet(state, tileMap, id, point.X, point.Y, face));
-                            bulletCount--;
-                            attackDelay = attackSpeed;
-                            for (int i = 0; i < state.playerNum; i++)
-                            {
-                                state.ssm.SendMessage(i, "Attack," + id.ToString());
-                            }
-                        }
-                    }
-                    if(reload)
-                    {
-                        reloadingDownCount = reloadingTime;
-                        for (int i = 0; i < state.playerNum; i++)
-                        {
-                            state.ssm.SendMessage(i, "Reload," + id.ToString());
-                        }
-                        reload = false;
-                    }
-                }
-                else
-                {
-                    reloadingDownCount--;
-                    if (reloadingDownCount == 0)
-                        bulletCount = maxBulletCount;
-                }
-                if (attackDelay > 0)
-                    attackDelay--;
+                Attack();
                 if (SetAction())
                 {
                     for (int i = 0; i < state.playerNum; i++)

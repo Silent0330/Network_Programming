@@ -12,6 +12,7 @@ namespace LittleGame.State
         private int playerNum;
         private int playerId;
         private System.Windows.Forms.Button backButton;
+        private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Panel[] subpanels;
         private System.Windows.Forms.PictureBox[] plaIcon;
         private System.Windows.Forms.Label[] playerInfoLabels;
@@ -29,9 +30,12 @@ namespace LittleGame.State
         {
             this.gsm = gsm;
             this.backButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
             this.playerInfoLabels = new System.Windows.Forms.Label[4];
             this.subpanels = new System.Windows.Forms.Panel[4];
             this.plaIcon = new System.Windows.Forms.PictureBox[4];
+            this.playerId = -1;
+            this.playerNum = 0;
 
 
             //panel
@@ -95,6 +99,25 @@ namespace LittleGame.State
             this.backButton.MouseLeave += new System.EventHandler(this.back_MouseLeave);
             this.backButton.MouseHover += new System.EventHandler(this.back_MouseHover);
             #endregion
+
+            #region start button
+            this.startButton.BackColor = System.Drawing.Color.Transparent;
+            this.startButton.FlatAppearance.BorderSize = 0;
+            this.startButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.startButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.startButton.Font = new System.Drawing.Font("標楷體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.startButton.ForeColor = System.Drawing.Color.Black;
+            this.startButton.Location = new System.Drawing.Point(650, 500);
+            this.startButton.Name = "start button";
+            this.startButton.Size = new System.Drawing.Size(100, 40);
+            this.startButton.TabIndex = 0;
+            this.startButton.Text = "START";
+            this.startButton.UseVisualStyleBackColor = false;
+            this.startButton.Click += new System.EventHandler(this.start_Click);
+            this.startButton.MouseLeave += new System.EventHandler(this.start_MouseLeave);
+            this.startButton.MouseHover += new System.EventHandler(this.start_MouseHover);
+            #endregion
         }
 
         public override void KeyDown(KeyEventArgs e)
@@ -132,6 +155,14 @@ namespace LittleGame.State
 
             if (refresh)
             {
+                if(playerId == 0)
+                {
+                    this.Controls.Add(startButton);
+                }
+                else
+                {
+                    this.Controls.Remove(startButton);
+                }
                 for (int i = 0; i < 4; i++)
                 {
                     if (i == playerId)
@@ -194,5 +225,20 @@ namespace LittleGame.State
             backButton.ForeColor = System.Drawing.Color.Black;
         }
 
+        //start button
+        private void start_Click(object sender, EventArgs e)
+        {
+            gsm.csm.SendMessage("StartGame");
+        }
+
+        private void start_MouseHover(object sender, EventArgs e)
+        {
+            startButton.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void start_MouseLeave(object sender, EventArgs e)
+        {
+            startButton.ForeColor = System.Drawing.Color.Black;
+        }
     }
 }

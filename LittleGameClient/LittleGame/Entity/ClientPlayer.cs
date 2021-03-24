@@ -33,6 +33,8 @@ namespace LittleGame.Entity
         public bool Attack { get => attack; set => attack = value; }
         private bool reload;
         public bool Reload { get => reload; set => reload = value; }
+        private bool reloadDone;
+        public bool ReloadDone { get => reloadDone; set => reloadDone = value; }
         public int bulletCount;
         private int maxBulletCount;
 
@@ -90,7 +92,8 @@ namespace LittleGame.Entity
             this.point = new System.Drawing.Point(x, y);
             this.hp = 1;
             this.attack = false;
-            this.reload = true;
+            this.reload = false;
+            this.reloadDone = false;
             this.bulletCount = 6;
             this.maxBulletCount = 6;
 
@@ -136,9 +139,10 @@ namespace LittleGame.Entity
                     bulletCount--;
                     attack = false;
                 }
-                if(reload)
+                if(reloadDone)
                 {
                     bulletCount = maxBulletCount;
+                    reloadDone = false;
                     reload = false;
                 }
                 LoadImage(images[id, face]);

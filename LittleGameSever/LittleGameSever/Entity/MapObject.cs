@@ -24,16 +24,16 @@ namespace LittleGame.Entity
         protected int moveSpeed;
 
         //control
-        protected bool up;
-        protected bool down;
-        protected bool left;
-        protected bool right;
+        protected bool key_up;
+        protected bool key_down;
+        protected bool key_left;
+        protected bool key_right;
         
 
-        public bool Up{ get { return up; } set { up = value; } }
-        public bool Down { get { return down; } set { down = value; } }
-        public bool Left { get { return left; } set { left = value; } }
-        public bool Right { get { return right; } set { right = value; } }
+        public bool Key_Up{ get { return key_up; } set { key_up = value; } }
+        public bool Key_Down { get { return key_down; } set { key_down = value; } }
+        public bool Key_Left { get { return key_left; } set { key_left = value; } }
+        public bool Key_Right { get { return key_right; } set { key_right = value; } }
 
         // action
         protected int face;
@@ -81,19 +81,19 @@ namespace LittleGame.Entity
         public void SetSpeed()
         {
             vx = vy = 0;
-            if (up)
+            if (key_up)
             {
                 vy -= stepSize;
             }
-            if (down)
+            if (key_down)
             {
                 vy += stepSize;
             }
-            if (left)
+            if (key_left)
             {
                 vx -= stepSize;
             }
-            if (right)
+            if (key_right)
             {
                 vx += stepSize;
             }
