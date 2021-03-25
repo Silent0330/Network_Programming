@@ -35,7 +35,7 @@ namespace LittleGame.Entity
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = 5;
+            this.moveSpeed = 1;
 
             // action
             this.face = face;

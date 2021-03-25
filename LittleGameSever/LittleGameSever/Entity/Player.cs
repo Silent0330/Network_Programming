@@ -42,7 +42,7 @@ namespace LittleGame.Entity
             this.vy = 0;
             this.stepSize = 10;
             this.moveDelay = 0;
-            this.moveSpeed = 5;
+            this.moveSpeed = 2;
 
             //info
             this.id = id;

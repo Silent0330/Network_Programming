@@ -32,10 +32,14 @@ namespace LittleGame
         /// </summary>
         private void InitializeComponent()
         {
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.ClientSize = new System.Drawing.Size(800, 600);
             this.Text = "Form1";
+            this.ResumeLayout(false);
+            this.KeyPreview = true;
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
         }

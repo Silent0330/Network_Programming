@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,7 +17,9 @@ namespace LittleGameSever
     public partial class Form1 : Form
     {
         private SeverSocketManager ssm;
-        private Timer timer;
+        private Thread gameThread;
+        private System.Windows.Forms.Timer timer;
+        private double fps;
 
         private bool playing;
         public bool Playing { get => playing; }
@@ -34,34 +37,45 @@ namespace LittleGameSever
             playing = false;
 
             ssm = new SeverSocketManager(this, 4);
+            
+            this.fps = 0;
 
-            timer = new System.Windows.Forms.Timer();
-            this.timer.Interval = 1;
-            this.timer.Tick += new System.EventHandler(this.loop);
+
+            this.timer = new System.Windows.Forms.Timer();
+            this.timer.Interval = 30;
+            this.timer.Tick += new System.EventHandler(UiUpdate);
             this.timer.Enabled = true;
             this.timer.Start();
 
             propertiesDataTable = new DataTable();
             propertiesDataTable.Columns.Add("Properties");
             propertiesDataTable.Columns.Add("Value");
+            propertiesDataTable.PrimaryKey = new DataColumn[] { propertiesDataTable.Columns["Properties"] };
 
             propertiesDataTable.Rows.Add("Listening", ssm.Listening.ToString());
+            propertiesDataTable.Rows.Add("FPS", 0);
             GetIpAddress();
 
             dataGridView1.DataSource = propertiesDataTable;
         }
-
-        private void loop(object sender, EventArgs e)
+        private void UiUpdate(object sender, EventArgs e)
         {
-            for(int i = 0; i < 10 && log_List.Count > 0; i++)
+            for (int i = 0; i < 10 && log_List.Count > 0; i++)
             {
                 txtBox_Log.AppendText(log_List.Dequeue());
             }
-            if(!playing)
+            propertiesDataTable.Rows.Find("FPS")[1] = (int)fps;
+            if (!propertiesDataTable.Rows.Find("Listening")[1].Equals(ssm.Listening.ToString()))
+                propertiesDataTable.Rows.Find("Listening")[1] = ssm.Listening.ToString();
+            if (!playing)
             {
-                if(ssm.CurConnectionNum > 0 && ssm.clientHandler_List[0].StartGameRequest)
+                if (fps != 0)
                 {
-                    if(ssm.CurConnectionNum > 1)
+                    fps = 0;
+                }
+                if (ssm.CurConnectionNum > 0 && ssm.clientHandler_List[0].StartGameRequest)
+                {
+                    if (ssm.CurConnectionNum > 1)
                     {
                         playing = true;
                         StartGame();
@@ -69,13 +83,28 @@ namespace LittleGameSever
                     ssm.clientHandler_List[0].StartGameRequest = false;
                 }
             }
-            if(playing)
+            else
             {
-                playingState.Update();
-                if(playingState.GameOver)
+                if (playingState.GameOver)
                 {
                     StopGame();
                 }
+            }
+        }
+
+        private void Loop()
+        {
+            while(playing)
+            {
+                DateTime startTime = DateTime.Now;
+                playingState.Update();
+                double elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
+                if (elapsedSeconds < 0.008)
+                {
+                    Thread.Sleep(8 - (int)(elapsedSeconds * 1000));
+                }
+                elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
+                fps = (1 / elapsedSeconds);
             }
         }
 
@@ -93,7 +122,7 @@ namespace LittleGameSever
             int num = 1;
             foreach (IPAddress ipAddress in ipHostEntry.AddressList)
             {
-                propertiesDataTable.Rows.Add("Ip", ipAddress.ToString());
+                propertiesDataTable.Rows.Add("Ip " + num.ToString(), ipAddress.ToString());
                 num++;
             }
         }
@@ -148,6 +177,9 @@ namespace LittleGameSever
             }
             playingState = new PlayingState(ssm, ssm.CurConnectionNum);
             playing = true;
+            gameThread = new Thread(Loop);
+            gameThread.IsBackground = true;
+            gameThread.Start();
             btn_StartGame.Enabled = false;
             btn_StopSever.Enabled = false;
             btn_StopGame.Enabled = true;
@@ -162,8 +194,9 @@ namespace LittleGameSever
         {
             if (playing)
             {
-                playingState = null;
                 playing = false;
+                playingState = null;
+                gameThread = null;
                 for (int i = 0; i < ssm.CurConnectionNum; i++)
                 {
                     ssm.SendMessage(i, "GameOver");
