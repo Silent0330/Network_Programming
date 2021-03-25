@@ -183,14 +183,20 @@ namespace LittleGame.State
                     if (messages[0].Equals("BulletMove"))
                     {
                         if (int.Parse(messages[1]) < clientBullets_List.Count)
+                        {
                             clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                            recivedCommand_List.RemoveAt(0);
+                        }
                         else
                             break;
                     }
                     else if (messages[0].Equals("BulletRemove"))
                     {
                         if (int.Parse(messages[1]) < clientBullets_List.Count)
+                        {
                             clientBullets_List[int.Parse(messages[1])].End = true;
+                            recivedCommand_List.RemoveAt(0);
+                        }
                         else
                             break;
                     }
