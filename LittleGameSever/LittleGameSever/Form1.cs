@@ -99,9 +99,9 @@ namespace LittleGameSever
                 DateTime startTime = DateTime.Now;
                 playingState.Update();
                 double elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
-                if (elapsedSeconds < 0.008)
+                if (elapsedSeconds < 0.016)
                 {
-                    Thread.Sleep(8 - (int)(elapsedSeconds * 1000));
+                    Thread.Sleep(16 - (int)(elapsedSeconds * 1000));
                 }
                 elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
                 fps = (1 / elapsedSeconds);
@@ -196,7 +196,11 @@ namespace LittleGameSever
             {
                 playing = false;
                 playingState = null;
-                gameThread = null;
+                if(gameThread != null)
+                {
+                    gameThread.Abort();
+                    gameThread = null;
+                }
                 for (int i = 0; i < ssm.CurConnectionNum; i++)
                 {
                     ssm.SendMessage(i, "GameOver");

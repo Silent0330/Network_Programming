@@ -134,7 +134,7 @@ namespace LittleGameSever.SeverManager
                 try
                 {
                     socket.Send(bytes);
-                    Thread.Sleep(5);
+                    Thread.Sleep(1);
                 }
                 catch (Exception e)
                 {

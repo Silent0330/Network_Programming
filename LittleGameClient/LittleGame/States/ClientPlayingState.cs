@@ -200,6 +200,14 @@ namespace LittleGame.State
                         else
                             break;
                     }
+                    else if (messages[0].Equals("BulletCountCheck"))
+                    {
+                        while(clientBullets_List.Count > int.Parse(messages[1]))
+                        {
+                            clientBullets_List[0].Dispose();
+                            clientBullets_List.RemoveAt(0);
+                        }
+                    }
                 }
                 for (int i = 0; i < clientBullets_List.Count; i++)
                 {

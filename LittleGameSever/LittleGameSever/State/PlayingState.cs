@@ -20,6 +20,9 @@ namespace LittleGame.State
 
         public TileMap tileMap;
         public List<Entity.Bullet> bullet_List;
+
+        private int checkCountDown = 60;
+        private int checkTime = 60;
         
         public Entity.Player[] players;
         private bool gameOver;
@@ -49,6 +52,9 @@ namespace LittleGame.State
             this.tileMap = new TileMap(maps[0]);
             this.players = new Player[maxPlayerNum];
             this.bullet_List = new List<Bullet>();
+
+            this.checkCountDown = 60;
+            this.checkTime = 60;
 
             this.playerNum = player_num;
             for (int i = 0; i < playerNum; i++)
@@ -81,6 +87,18 @@ namespace LittleGame.State
                         }
                         i--;
                     }
+                }
+                if(checkCountDown > 0)
+                {
+                    checkCountDown--;
+                }
+                else
+                {
+                    for (int i = 0; i < playerNum; i++)
+                    {
+                        ssm.SendMessage(i, "BulletCount," + bullet_List.Count.ToString());
+                    }
+                    checkCountDown = checkTime;
                 }
                 if (aliveNum <= 1)
                 {

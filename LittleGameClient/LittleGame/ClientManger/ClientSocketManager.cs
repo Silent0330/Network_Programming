@@ -169,6 +169,10 @@ namespace LittleGame.Sever
                         else
                             state.recivedCommand_List.Add(message);
                     }
+                    else if (messages[0].Equals("BulletCountCheck"))
+                    {
+                        state.recivedCommand_List.Add(message);
+                    }
                     else if (messages[0].Equals("Reload"))
                     {
                         state.players[int.Parse(messages[1])].Reload = true;
