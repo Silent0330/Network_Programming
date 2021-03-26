@@ -1,5 +1,6 @@
 ﻿using LittleGame.State;
 using System;
+using System.Timers;
 
 namespace LittleGame.Entity
 {
@@ -9,6 +10,9 @@ namespace LittleGame.Entity
         private System.Windows.Forms.PictureBox pictureBox;
         public System.Drawing.Point point;
         public System.Drawing.Size size;
+
+        private int endTime;
+        private System.Timers.Timer timer;
 
         private bool end;
         public bool End { get => end; set => end = value; }
@@ -34,7 +38,14 @@ namespace LittleGame.Entity
             this.end = false;
             this.direction = face;
 
-            if(direction == UP || direction == DOWN)
+            this.endTime = 20;
+            this.end = false;
+            this.timer = new System.Timers.Timer(100);
+            this.timer.Elapsed += count;
+            this.timer.Enabled = true;
+            this.timer.Start();
+
+            if (direction == UP || direction == DOWN)
             {
                 size = new System.Drawing.Size(5, 20);
             }
@@ -46,6 +57,15 @@ namespace LittleGame.Entity
             LoadImage(images[this.direction]);
             this.state.Controls.Add(pictureBox);
             pictureBox.BringToFront();
+        }
+        public void count(Object source, ElapsedEventArgs e)
+        {
+            endTime--;
+            if (endTime == 0 || end)
+            {
+                end = true;
+                timer.Enabled = false;
+            }
         }
 
         private void LoadImage(System.Drawing.Bitmap image)
@@ -68,6 +88,7 @@ namespace LittleGame.Entity
 
         public void Dispose()
         {
+            timer.Dispose();
             state.Controls.Remove(this.pictureBox);
         }
 

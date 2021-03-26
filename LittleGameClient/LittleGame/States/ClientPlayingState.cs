@@ -177,7 +177,7 @@ namespace LittleGame.State
                 {
                     players[i].Update();
                 }
-                for(int i = 0; i < 10 && recivedCommand_List.Count > 0; i++)
+                for(int i = 0; i < 20 && recivedCommand_List.Count > 0; i++)
                 {
                     string[] messages = recivedCommand_List[0].Split(',');
                     if (messages[0].Equals("BulletMove"))
@@ -200,14 +200,6 @@ namespace LittleGame.State
                         else
                             break;
                     }
-                    else if (messages[0].Equals("BulletCountCheck"))
-                    {
-                        while(clientBullets_List.Count > int.Parse(messages[1]))
-                        {
-                            clientBullets_List[0].Dispose();
-                            clientBullets_List.RemoveAt(0);
-                        }
-                    }
                 }
                 for (int i = 0; i < clientBullets_List.Count; i++)
                 {
@@ -216,6 +208,7 @@ namespace LittleGame.State
                     {
                         clientBullets_List[i].Dispose();
                         clientBullets_List.RemoveAt(i);
+                        i--;
                     }
                 }
                 if (!gsm.csm.GameStart)
