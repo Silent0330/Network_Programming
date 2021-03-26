@@ -171,11 +171,6 @@ namespace LittleGame.SeverManager
                 Thread.Sleep(100);
 			}
 		}
-
-        private void RecvMessage(int clientNumber)
-        {
-
-        }
         
         public bool SendMessage(int clientId, string message)
         {

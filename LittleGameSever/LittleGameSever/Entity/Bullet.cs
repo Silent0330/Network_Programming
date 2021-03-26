@@ -96,7 +96,7 @@ namespace LittleGame.Entity
                 {
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.ssm.SendMessage(i, "BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
+                        state.clientMessages[i] += ("BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString() + ";");
                     }
                 }
                 if (blocked)

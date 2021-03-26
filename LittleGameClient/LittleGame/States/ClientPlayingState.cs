@@ -89,6 +89,7 @@ namespace LittleGame.State
             bulletcountLabel.BringToFront();
 
             gsm.csm.state = this;
+            gsm.csm.SendMessage("Ready," + true.ToString());
         }
         
         public override void KeyDown(KeyEventArgs e)

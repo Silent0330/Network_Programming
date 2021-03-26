@@ -21,7 +21,8 @@ namespace LittleGame.State
         public TileMap tileMap;
         public List<Entity.Bullet> bullet_List;
         
-        public Entity.Player[] players;
+        public Player[] players;
+        public string[] clientMessages;
         private bool gameOver;
         public bool GameOver { get => gameOver; }
         public int playerNum;
@@ -48,6 +49,7 @@ namespace LittleGame.State
             this.ssm = ssm;
             this.tileMap = new TileMap(maps[0]);
             this.players = new Player[maxPlayerNum];
+            this.clientMessages = new string[maxPlayerNum];
             this.bullet_List = new List<Bullet>();
 
             this.playerNum = player_num;
@@ -66,6 +68,7 @@ namespace LittleGame.State
             {
                 for (int i = 0; i < playerNum; i++)
                 {
+                    clientMessages[i] = "";
                     players[i].Update();
                 }
                 for (int i = 0; i < bullet_List.Count; i++)
@@ -77,7 +80,7 @@ namespace LittleGame.State
                         bullet_List.RemoveAt(i);
                         for (int j = 0; j < playerNum; j++)
                         {
-                            ssm.SendMessage(j, "BulletRemove," + i.ToString());
+                            clientMessages[j] += ("BulletRemove," + i.ToString() + ";");
                         }
                         i--;
                     }
@@ -94,7 +97,7 @@ namespace LittleGame.State
                     gameOver = true;
                     for (int i = 0; i < playerNum; i++)
                     {
-                        ssm.SendMessage(i, "GameOver");
+                        clientMessages[i] += ("GameOver;");
                     }
                 }
                 if(ssm.CurConnectionNum < 1)
@@ -102,6 +105,14 @@ namespace LittleGame.State
                     gameOver = true;
                 }
             }
+            for (int i = 0; i < playerNum; i++)
+            {
+                if(clientMessages[i].Length > 0)
+                {
+                    ssm.SendMessage(i, clientMessages[i]);
+                }
+            }
         }
+
     }
 }

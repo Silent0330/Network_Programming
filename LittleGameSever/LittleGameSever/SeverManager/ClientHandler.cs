@@ -88,39 +88,43 @@ namespace LittleGameSever.SeverManager
                     break;
                 }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
-                string[] messages = message.Split(',');
+                string[] messages = message.Split(';');
+                for(int i = 0; i < messages.Length; i++)
+                {
+                    string[] messageArgs = messages[i].Split(',');
 
-                if (messages[0].Equals("Up"))
-                {
-                    up = bool.Parse(messages[1]);
-                }
-                else if (messages[0].Equals("Down"))
-                {
-                    down = bool.Parse(messages[1]); ;
-                }
-                else if (messages[0].Equals("Left"))
-                {
-                    left = bool.Parse(messages[1]);
-                }
-                else if (messages[0].Equals("Right"))
-                {
-                    right = bool.Parse(messages[1]);
-                }
-                else if (messages[0].Equals("Attack"))
-                {
-                    attack = bool.Parse(messages[1]);
-                }
-                else if (messages[0].Equals("Reload"))
-                {
-                    reload = bool.Parse(messages[1]);
-                }
-                else if (messages[0].Equals("StartGame"))
-                {
-                    startGameRequest = true;
-                }
-                else if (messages[0].Equals("Ready"))
-                {
-                    readyToStart = bool.Parse(messages[1]);
+                    if (messageArgs[0].Equals("Up"))
+                    {
+                        up = bool.Parse(messageArgs[1]);
+                    }
+                    else if (messageArgs[0].Equals("Down"))
+                    {
+                        down = bool.Parse(messageArgs[1]); ;
+                    }
+                    else if (messageArgs[0].Equals("Left"))
+                    {
+                        left = bool.Parse(messageArgs[1]);
+                    }
+                    else if (messageArgs[0].Equals("Right"))
+                    {
+                        right = bool.Parse(messageArgs[1]);
+                    }
+                    else if (messageArgs[0].Equals("Attack"))
+                    {
+                        attack = bool.Parse(messageArgs[1]);
+                    }
+                    else if (messageArgs[0].Equals("Reload"))
+                    {
+                        reload = bool.Parse(messageArgs[1]);
+                    }
+                    else if (messageArgs[0].Equals("StartGame"))
+                    {
+                        startGameRequest = true;
+                    }
+                    else if (messageArgs[0].Equals("Ready"))
+                    {
+                        readyToStart = bool.Parse(messageArgs[1]);
+                    }
                 }
             }
         }
@@ -129,7 +133,8 @@ namespace LittleGameSever.SeverManager
         {
             if(connected)
             {
-                message += ",";
+                if(!message.Last().Equals(';'))
+                    message += ";";
                 byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
                 try
                 {

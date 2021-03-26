@@ -83,7 +83,7 @@ namespace LittleGame.Entity
                     state.aliveNum--;
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.ssm.SendMessage(i, "Dead," + id.ToString());
+                        state.clientMessages[i] += ("Dead," + id.ToString());
                     }
                 }
             }
@@ -152,7 +152,7 @@ namespace LittleGame.Entity
                         attackDelay = attackSpeed;
                         for (int i = 0; i < state.playerNum; i++)
                         {
-                            state.ssm.SendMessage(i, "Attack," + id.ToString());
+                            state.clientMessages[i] += ("Attack," + id.ToString() + ";");
                         }
                     }
                 }
@@ -163,7 +163,7 @@ namespace LittleGame.Entity
                         reloadingDownCount = reloadingTime;
                         for (int i = 0; i < state.playerNum; i++)
                         {
-                            state.ssm.SendMessage(i, "Reload," + id.ToString());
+                            state.clientMessages[i] += ("Reload," + id.ToString() + ";");
                         }
                     }
                     key_reload = false;
@@ -177,7 +177,7 @@ namespace LittleGame.Entity
                     bulletCount = maxBulletCount;
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.ssm.SendMessage(i, "ReloadDone," + id.ToString());
+                        state.clientMessages[i] += ("ReloadDone," + id.ToString() + ";");
                     }
                 }
             }
@@ -194,7 +194,7 @@ namespace LittleGame.Entity
                 {
                     for(int i = 0; i < state.playerNum; i++)
                     {
-                        state.ssm.SendMessage(i, "Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
+                        state.clientMessages[i] += ("Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString() + ";");
                     }
                 }
                 Attack();
@@ -202,7 +202,7 @@ namespace LittleGame.Entity
                 {
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.ssm.SendMessage(i, "Face," + id.ToString() + "," + face.ToString());
+                        state.clientMessages[i] += ("Face," + id.ToString() + "," + face.ToString() + ";");
                     }
                 }
             }

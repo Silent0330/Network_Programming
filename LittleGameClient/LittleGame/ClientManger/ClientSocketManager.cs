@@ -38,11 +38,11 @@ namespace LittleGame.Sever
             {
                 clientSocket.Connect(IPAddress.Parse(IP), port);
                 byte[] bytes = new byte[2048];
-                string message;
                 clientSocket.Receive(bytes);
-                message = System.Text.Encoding.UTF8.GetString(bytes);
-                string[] messages = message.Split(',');
-                if (messages[0] == "Full")
+                string message = System.Text.Encoding.UTF8.GetString(bytes);
+                string[] messages = message.Split(';');
+                string[] messageArgs = messages[0].Split(',');
+                if (messageArgs[0] == "Full")
                 {
                     try
                     {
@@ -53,9 +53,9 @@ namespace LittleGame.Sever
                         clientSocket = null;
                     }
                 }
-                else if (messages[0] == "Id")
+                else if (messageArgs[0] == "Id")
                 {
-                    playerId = int.Parse(messages[1]);
+                    playerId = int.Parse(messageArgs[1]);
                     connected = true;
                     recvThread = new Thread(rcvMessage);
                     recvThread.IsBackground = true;
@@ -106,7 +106,7 @@ namespace LittleGame.Sever
 
         public void SendMessage(string message)
         {
-            message += ",";
+            message += ";";
             if (Connected)
             {
                 try
@@ -131,65 +131,67 @@ namespace LittleGame.Sever
                     byte[] bytes = new byte[2048];
                     clientSocket.Receive(bytes);
                     string message = System.Text.Encoding.UTF8.GetString(bytes);
-                    string[] messages = message.Split(',');
-                    Console.WriteLine(message);
+                    string[] messages = message.Split(';');
+                    for (int i = 0; i < messages.Length; i++)
+                    {
+                        string[] messageArgs = messages[i].Split(',');
+                        Console.WriteLine(message);
 
-                    if (messages[0].Equals("Start"))
-                    {
-                        gameStart = true;
-                        SendMessage("Ready," + true.ToString());
+                        if (messageArgs[0].Equals("Start"))
+                        {
+                            gameStart = true;
+                        }
+                        else if (messageArgs[0].Equals("Id"))
+                        {
+                            playerId = int.Parse(messageArgs[1]);
+                        }
+                        else if (messageArgs[0].Equals("Move"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
+                        }
+                        else if (messageArgs[0].Equals("Face"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].Face = int.Parse(messageArgs[2]);
+                        }
+                        else if (messageArgs[0].Equals("Attack"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].Attack = true;
+                        }
+                        else if (messageArgs[0].Equals("BulletMove"))
+                        {
+                            if (int.Parse(messageArgs[1]) < state.clientBullets_List.Count)
+                                state.clientBullets_List[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
+                            else
+                                state.recivedCommand_List.Add(message);
+                        }
+                        else if (messageArgs[0].Equals("BulletRemove"))
+                        {
+                            if (int.Parse(messageArgs[1]) < state.clientBullets_List.Count)
+                                state.clientBullets_List[int.Parse(messageArgs[1])].End = true;
+                            else
+                                state.recivedCommand_List.Add(message);
+                        }
+                        else if (messageArgs[0].Equals("Reload"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].Reload = true;
+                        }
+                        else if (messageArgs[0].Equals("ReloadDone"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].ReloadDone = true;
+                        }
+                        else if (messageArgs[0].Equals("Dead"))
+                        {
+                            state.players[int.Parse(messageArgs[1])].SetDead();
+                        }
+                        else if (messageArgs[0].Equals("PlayerNum"))
+                        {
+                            playerNum = int.Parse(messageArgs[1]);
+                        }
+                        else if (messageArgs[0].Equals("GameOver"))
+                        {
+                            gameStart = false;
+                        }
                     }
-                    else if (messages[0].Equals("Id"))
-                    {
-                        playerId = int.Parse(messages[1]);
-                    }
-                    else if (messages[0].Equals("Move"))
-                    {
-                        state.players[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
-                    }
-                    else if (messages[0].Equals("Face"))
-                    {
-                        state.players[int.Parse(messages[1])].Face = int.Parse(messages[2]);
-                    }
-                    else if (messages[0].Equals("Attack"))
-                    {
-                        state.players[int.Parse(messages[1])].Attack = true;
-                    }
-                    else if (messages[0].Equals("BulletMove"))
-                    {
-                        if (int.Parse(messages[1]) < state.clientBullets_List.Count)
-                            state.clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
-                        else
-                            state.recivedCommand_List.Add(message);
-                    }
-                    else if (messages[0].Equals("BulletRemove"))
-                    {
-                        if (int.Parse(messages[1]) < state.clientBullets_List.Count)
-                            state.clientBullets_List[int.Parse(messages[1])].End = true ;
-                        else
-                            state.recivedCommand_List.Add(message);
-                    }
-                    else if (messages[0].Equals("Reload"))
-                    {
-                        state.players[int.Parse(messages[1])].Reload = true;
-                    }
-                    else if (messages[0].Equals("ReloadDone"))
-                    {
-                        state.players[int.Parse(messages[1])].ReloadDone = true;
-                    }
-                    else if (messages[0].Equals("Dead"))
-                    {
-                        state.players[int.Parse(messages[1])].SetDead();
-                    }
-                    else if (messages[0].Equals("PlayerNum"))
-                    {
-                        playerNum = int.Parse(messages[1]);
-                    }
-                    else if (messages[0].Equals("GameOver"))
-                    {
-                        gameStart = false;
-                    }
-                    Thread.Sleep(10);
                 }
                 catch (Exception e)
                 {
