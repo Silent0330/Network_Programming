@@ -157,20 +157,6 @@ namespace LittleGame.Sever
                         {
                             state.players[int.Parse(messageArgs[1])].Attack = true;
                         }
-                        else if (messageArgs[0].Equals("BulletMove"))
-                        {
-                            if (int.Parse(messageArgs[1]) < state.clientBullets_List.Count)
-                                state.clientBullets_List[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
-                            else
-                                state.recivedCommand_List.Add(message);
-                        }
-                        else if (messageArgs[0].Equals("BulletRemove"))
-                        {
-                            if (int.Parse(messageArgs[1]) < state.clientBullets_List.Count)
-                                state.clientBullets_List[int.Parse(messageArgs[1])].End = true;
-                            else
-                                state.recivedCommand_List.Add(message);
-                        }
                         else if (messageArgs[0].Equals("Reload"))
                         {
                             state.players[int.Parse(messageArgs[1])].Reload = true;
@@ -191,6 +177,7 @@ namespace LittleGame.Sever
                         {
                             gameStart = false;
                         }
+                        Thread.Sleep(5);
                     }
                 }
                 catch (Exception e)

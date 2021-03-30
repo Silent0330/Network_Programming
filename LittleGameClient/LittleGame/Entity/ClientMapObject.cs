@@ -1,17 +1,17 @@
-﻿using LittleGameSever.State;
-using LittleGameSever.TileMaps;
+﻿using LittleGame.State;
+using LittleGame.TileMaps;
 using System.Drawing;
 
-namespace LittleGameSever.Entity
+namespace LittleGame.Entity
 {
-    abstract class MapObject
+    abstract class ClientMapObject
     {
-        protected PlayingState state;
+        protected ClientPlayingState state;
         protected TileMap tileMap;
 
         //position and move
         protected Point point;
-        protected int height, width;
+        protected System.Drawing.Size size;
         protected int vx, vy;
         protected int stepSize = 5;
         protected int dx, dy;
@@ -45,10 +45,10 @@ namespace LittleGameSever.Entity
 
         public Rectangle GetRectangle()
         {
-            return new Rectangle(point.X, point.Y, width, height);
+            return new Rectangle(point.X, point.Y, size.Width, size.Height);
         }
 
-        public bool InterSection(MapObject obj)
+        public bool InterSection(ClientMapObject obj)
         {
             Rectangle rec1 = GetRectangle();
             Rectangle rec2 = obj.GetRectangle();
@@ -102,9 +102,9 @@ namespace LittleGameSever.Entity
 
             //up down
             l = point.X / TileMap.TILE_SIZE;
-            r = (point.X + width) / TileMap.TILE_SIZE;
+            r = (point.X + size.Width) / TileMap.TILE_SIZE;
             u = dy / TileMap.TILE_SIZE;
-            d = (dy + height) / TileMap.TILE_SIZE;
+            d = (dy + size.Height) / TileMap.TILE_SIZE;
             if (dy >= 0)
                 upBlocked = tileMap.getBlocked(u, l) || tileMap.getBlocked(u, r);
             else
@@ -122,9 +122,9 @@ namespace LittleGameSever.Entity
 
             //left right
             l = dx / TileMap.TILE_SIZE;
-            r = (dx + width) / TileMap.TILE_SIZE;
+            r = (dx + size.Width) / TileMap.TILE_SIZE;
             u = dy / TileMap.TILE_SIZE;
-            d = (dy + height) / TileMap.TILE_SIZE;
+            d = (dy + size.Height) / TileMap.TILE_SIZE;
             if (dx >= 0)
                 leftBlocked = tileMap.getBlocked(u, l) || tileMap.getBlocked(d, l);
             else

@@ -1,12 +1,8 @@
-﻿using LittleGame.State;
-using System;
-using System.Collections.Generic;
+﻿using LittleGameSever.State;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LittleGame.Entity
+namespace LittleGameSever.Entity
 {
     class Player : MapObject
     {
@@ -37,7 +33,7 @@ namespace LittleGame.Entity
             this.tileMap = state.tileMap;
 
             //position
-            this.point = new Point(x, y);
+            this.point = new Point(x,y);
             this.vx = 0;
             this.vy = 0;
             this.stepSize = 10;
@@ -59,11 +55,11 @@ namespace LittleGame.Entity
             this.face = DOWN;
 
             //attack
-            this.attackSpeed = 50;
+            this.attackSpeed = state.form.UpdateTime / 16 * 50;
             this.attackDelay = 0;
             this.maxBulletCount = 6;
             this.bulletCount = maxBulletCount;
-            this.reloadingTime = 100;
+            this.reloadingTime = state.form.UpdateTime / 16 * 100;
             this.reloadingDownCount = 0;
 
             //rectangle
@@ -83,7 +79,7 @@ namespace LittleGame.Entity
                     state.aliveNum--;
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.clientMessages[i] += ("Dead," + id.ToString());
+                        state.AddMessage(i, "Dead," + id.ToString());
                     }
                 }
             }
@@ -152,7 +148,7 @@ namespace LittleGame.Entity
                         attackDelay = attackSpeed;
                         for (int i = 0; i < state.playerNum; i++)
                         {
-                            state.clientMessages[i] += ("Attack," + id.ToString() + ";");
+                            state.AddMessage(i, "Attack," + id.ToString());
                         }
                     }
                 }
@@ -163,7 +159,7 @@ namespace LittleGame.Entity
                         reloadingDownCount = reloadingTime;
                         for (int i = 0; i < state.playerNum; i++)
                         {
-                            state.clientMessages[i] += ("Reload," + id.ToString() + ";");
+                            state.AddMessage(i, "Reload," + id.ToString());
                         }
                     }
                     key_reload = false;
@@ -177,7 +173,7 @@ namespace LittleGame.Entity
                     bulletCount = maxBulletCount;
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.clientMessages[i] += ("ReloadDone," + id.ToString() + ";");
+                        state.AddMessage(i, "ReloadDone," + id.ToString());
                     }
                 }
             }
@@ -194,7 +190,7 @@ namespace LittleGame.Entity
                 {
                     for(int i = 0; i < state.playerNum; i++)
                     {
-                        state.clientMessages[i] += ("Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString() + ";");
+                        state.AddMessage(i, "Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
                     }
                 }
                 Attack();
@@ -202,7 +198,7 @@ namespace LittleGame.Entity
                 {
                     for (int i = 0; i < state.playerNum; i++)
                     {
-                        state.clientMessages[i] += ("Face," + id.ToString() + "," + face.ToString() + ";");
+                        state.AddMessage(i, "Face," + id.ToString() + "," + face.ToString());
                     }
                 }
             }

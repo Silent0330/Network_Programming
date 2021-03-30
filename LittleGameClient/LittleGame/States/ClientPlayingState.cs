@@ -1,4 +1,5 @@
 ﻿using LittleGame.Entity;
+using LittleGame.TileMaps;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -6,6 +7,7 @@ namespace LittleGame.State
 {
     class ClientPlayingState : GameState
     {
+        public TileMap tileMap;
         public ClientPlayer[] players;
         public List<ClientBullet> clientBullets_List;
         public List<string> recivedCommand_List;
@@ -20,6 +22,11 @@ namespace LittleGame.State
             new System.Drawing.Point(700,50),
             new System.Drawing.Point(50,500),
             new System.Drawing.Point(700,500)
+        };
+
+        private static string[] maps =
+        {
+            @"..\..\Resources\Map\Map1_1.txt",
         };
 
         //move state
@@ -46,6 +53,7 @@ namespace LittleGame.State
         {
             this.gsm = gsm;
             this.playerNum = gsm.csm.PlayerNum;
+            this.tileMap = new TileMap(maps[0]);
             players = new ClientPlayer[4];
             clientBullets_List = new List<ClientBullet>();
             recivedCommand_List = new List<string>();
@@ -180,22 +188,22 @@ namespace LittleGame.State
                 }
                 for(int i = 0; i < 20 && recivedCommand_List.Count > 0; i++)
                 {
-                    string[] messages = recivedCommand_List[0].Split(',');
-                    if (messages[0].Equals("BulletMove"))
+                    string[] messageArgs = recivedCommand_List[0].Split(',');
+                    if (messageArgs[0].Equals("BulletMove"))
                     {
-                        if (int.Parse(messages[1]) < clientBullets_List.Count)
+                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
                         {
-                            clientBullets_List[int.Parse(messages[1])].SetPoint(int.Parse(messages[2]), int.Parse(messages[3]));
+                            clientBullets_List[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
                             recivedCommand_List.RemoveAt(0);
                         }
                         else
                             break;
                     }
-                    else if (messages[0].Equals("BulletRemove"))
+                    else if (messageArgs[0].Equals("BulletRemove"))
                     {
-                        if (int.Parse(messages[1]) < clientBullets_List.Count)
+                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
                         {
-                            clientBullets_List[int.Parse(messages[1])].End = true;
+                            clientBullets_List[int.Parse(messageArgs[1])].End = true;
                             recivedCommand_List.RemoveAt(0);
                         }
                         else

@@ -4,24 +4,16 @@ using System.Timers;
 
 namespace LittleGame.Entity
 {
-    class ClientBullet
+    class ClientBullet : ClientMapObject
     {
-        private ClientPlayingState state;
         private System.Windows.Forms.PictureBox pictureBox;
-        public System.Drawing.Point point;
-        public System.Drawing.Size size;
 
         private int endTime;
         private System.Timers.Timer timer;
 
         private bool end;
         public bool End { get => end; set => end = value; }
-        private int direction;
-        public int Direction { get => direction; set => direction = value; }
-        public const int UP = 0;
-        public const int DOWN = 1;
-        public const int LEFT = 2;
-        public const int RIGHT = 3;
+        private bool blocked;
         private static System.Drawing.Bitmap[] images =
         {
             Properties.Resources.bulletup,
@@ -33,10 +25,19 @@ namespace LittleGame.Entity
         public ClientBullet(State.ClientPlayingState state, int face, int x, int y)
         {
             this.state = state;
+            this.tileMap = state.tileMap;
             pictureBox = new System.Windows.Forms.PictureBox();
             this.point = new System.Drawing.Point(x, y);
             this.end = false;
-            this.direction = face;
+            this.face = face;
+
+            // position
+            this.vx = 0;
+            this.vy = 0;
+            this.stepSize = 20;
+            this.moveDelay = 0;
+            this.moveSpeed = 1;
+            this.blocked = false;
 
             this.endTime = 20;
             this.end = false;
@@ -45,16 +46,29 @@ namespace LittleGame.Entity
             this.timer.Enabled = true;
             this.timer.Start();
 
-            if (direction == UP || direction == DOWN)
+            key_up = key_down = key_left = key_right = false;
+            if (face == UP)
             {
+                key_up = true;
                 size = new System.Drawing.Size(5, 20);
             }
-            else if (direction == LEFT || direction == RIGHT)
+            else if (face == DOWN)
             {
+                key_down = true;
+                size = new System.Drawing.Size(5, 20);
+            }
+            else if (face == LEFT)
+            {
+                key_left = true;
+                size = new System.Drawing.Size(20, 5);
+            }
+            else if (face == RIGHT)
+            {
+                key_right = true;
                 size = new System.Drawing.Size(20, 5);
             }
 
-            LoadImage(images[this.direction]);
+            LoadImage(images[this.face]);
             this.state.Controls.Add(pictureBox);
             pictureBox.BringToFront();
         }
@@ -96,9 +110,20 @@ namespace LittleGame.Entity
         {
             if (!end)
             {
-                LoadImage(images[direction]);
+                Move();
+                if (blocked)
+                    end = true;
+                LoadImage(images[face]);
                 pictureBox.BringToFront();
             }
         }
+
+        protected new bool Move()
+        {
+            GetNextPosition();
+            blocked = CheckMapCollision();
+            return SetPosition();
+        }
+
     };
 }

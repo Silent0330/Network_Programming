@@ -1,14 +1,10 @@
-﻿using LittleGame.State;
-using LittleGame.TileMaps;
+﻿using LittleGameSever.State;
+using LittleGameSever.TileMaps;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
-namespace LittleGame.Entity
+namespace LittleGameSever.Entity
 {
     class Bullet : MapObject
     {
@@ -30,12 +26,12 @@ namespace LittleGame.Entity
             this.owner = id;
 
             // position
-            this.point = new Point(x, y);
+            this.point = new Point(x,y);
             this.vx = 0;
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = 1;
+            this.moveSpeed = state.form.UpdateTime / 16 * 1;
 
             // action
             this.face = face;
@@ -46,26 +42,26 @@ namespace LittleGame.Entity
             if(face == UP)
             {
                 key_up = true;
-                this.height = 20;
                 this.width = 5;
+                this.height = 20;
             }
             else if (face == DOWN)
             {
                 key_down = true;
-                this.height = 20;
                 this.width = 5;
+                this.height = 20;
             }
             else if (face == LEFT)
             {
                 key_left = true;
-                this.height = 5;
                 this.width = 20;
+                this.height = 5;
             }
             else if (face == RIGHT)
             {
                 key_right = true;
-                this.height = 5;
                 this.width = 20;
+                this.height = 5;
             }
 
             // end
@@ -92,13 +88,7 @@ namespace LittleGame.Entity
         {
             if (!end)
             {
-                if (Move())
-                {
-                    for (int i = 0; i < state.playerNum; i++)
-                    {
-                        state.clientMessages[i] += ("BulletMove," + index.ToString() + "," + point.X.ToString() + "," + point.Y.ToString() + ";");
-                    }
-                }
+                Move();
                 if (blocked)
                     end = true;
             }

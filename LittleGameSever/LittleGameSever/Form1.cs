@@ -1,21 +1,18 @@
-﻿using LittleGame.SeverManager;
-using LittleGame.State;
+﻿using LittleGameSever.SeverManager;
+using LittleGameSever.State;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LittleGameSever
 {
     public partial class Form1 : Form
     {
+        private int updateTime = 16;
+        public int UpdateTime { get => updateTime; }
         private SeverSocketManager ssm;
         private Thread gameThread;
         private System.Windows.Forms.Timer timer;
@@ -99,9 +96,9 @@ namespace LittleGameSever
                 DateTime startTime = DateTime.Now;
                 playingState.Update();
                 double elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
-                if (elapsedSeconds < 0.016)
+                if (elapsedSeconds * 1000 < updateTime)
                 {
-                    Thread.Sleep(16 - (int)(elapsedSeconds * 1000));
+                    Thread.Sleep(updateTime - (int)(elapsedSeconds * 1000));
                 }
                 elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
                 fps = (1 / elapsedSeconds);
@@ -175,7 +172,7 @@ namespace LittleGameSever
                     count = 0;
                 }
             }
-            playingState = new PlayingState(ssm, ssm.CurConnectionNum);
+            playingState = new PlayingState(this, ssm, ssm.CurConnectionNum);
             playing = true;
             gameThread = new Thread(Loop);
             gameThread.IsBackground = true;

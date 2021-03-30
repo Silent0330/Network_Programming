@@ -1,22 +1,15 @@
-﻿using LittleGame.Entity;
-using LittleGame.SeverManager;
-using LittleGame.TileMaps;
+﻿using LittleGameSever.Entity;
+using LittleGameSever.SeverManager;
+using LittleGameSever.TileMaps;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace LittleGame.State
+namespace LittleGameSever.State
 {
     class PlayingState
     {
         public SeverSocketManager ssm;
+        public Form1 form;
 
         public TileMap tileMap;
         public List<Entity.Bullet> bullet_List;
@@ -44,8 +37,9 @@ namespace LittleGame.State
 
 
 
-        public PlayingState(SeverSocketManager ssm, int player_num)
+        public PlayingState(Form1 form, SeverSocketManager ssm, int player_num)
         {
+            this.form = form;
             this.ssm = ssm;
             this.tileMap = new TileMap(maps[0]);
             this.players = new Player[maxPlayerNum];
@@ -61,7 +55,12 @@ namespace LittleGame.State
             gameOver = false;
             winner = 0;
         }
-        
+
+        public void AddMessage(int i, string message)
+        {
+            clientMessages[i] += message + ";";
+        }
+
         public void Update()
         {
             if (!gameOver)
@@ -69,6 +68,9 @@ namespace LittleGame.State
                 for (int i = 0; i < playerNum; i++)
                 {
                     clientMessages[i] = "";
+                }
+                for (int i = 0; i < playerNum; i++)
+                {
                     players[i].Update();
                 }
                 for (int i = 0; i < bullet_List.Count; i++)
@@ -80,7 +82,7 @@ namespace LittleGame.State
                         bullet_List.RemoveAt(i);
                         for (int j = 0; j < playerNum; j++)
                         {
-                            clientMessages[j] += ("BulletRemove," + i.ToString() + ";");
+                            AddMessage(j,"BulletRemove," + i.ToString());
                         }
                         i--;
                     }
@@ -97,7 +99,7 @@ namespace LittleGame.State
                     gameOver = true;
                     for (int i = 0; i < playerNum; i++)
                     {
-                        clientMessages[i] += ("GameOver;");
+                        AddMessage(i, "GameOver");
                     }
                 }
                 if(ssm.CurConnectionNum < 1)
@@ -109,7 +111,10 @@ namespace LittleGame.State
             {
                 if(clientMessages[i].Length > 0)
                 {
-                    ssm.SendMessage(i, clientMessages[i]);
+                    if(!ssm.SendMessage(i, clientMessages[i]))
+                    {
+                        Console.WriteLine(i + "failed " + clientMessages[i]);
+                    }
                 }
             }
         }

@@ -49,6 +49,7 @@
     <Compile Include="ClientManger\ClientSocketManager.cs" />
     <Compile Include="Entity\ClientBullet.cs" />
     <Compile Include="Entity\ClientPlayer.cs" />
+    <Compile Include="Entity\ClientMapObject.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,8 +71,8 @@
     <Compile Include="States\MenuState.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TileMao\Tile.cs" />
-    <Compile Include="TileMao\TileMap.cs" />
+    <Compile Include="TileMaps\Tile.cs" />
+    <Compile Include="TileMaps\TileMap.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -5,21 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace LittleGame.TileMap
+namespace LittleGame.TileMaps
 {
     class TileMap
     {
-        private State.GameState state;
         public const int numCols = 16;
         public const int numRows = 12;
         private Tile[,] tiles;
         public int[,] objMap;
-        public const int TILESIZE = 50;
+        public const int TILE_SIZE = 50;
 
-        public TileMap(State.GameState state, string map)
+        public TileMap(string map)
         {
-            this.state = state;
-
             objMap = new int[numRows, numCols];
 
             StreamReader str = new StreamReader(map);
@@ -30,8 +27,7 @@ namespace LittleGame.TileMap
                 read = str.ReadLine();
                 for(int j = 0; j < numCols; j++)
                 {
-                    tiles[i,j] = new Tile(read[j]- '0', j * TILESIZE, i * TILESIZE);
-                    this.state.Controls.Add(tiles[i,j].pictureBox);
+                    tiles[i,j] = new Tile(read[j]- '0');
                     this.objMap[i, j] = 0;
                 }
             }
@@ -39,7 +35,9 @@ namespace LittleGame.TileMap
 
         public bool getBlocked(int row, int col)
         {
-            return tiles[row,col].getBlocked() || (objMap[row, col] != 0);
+            if(row >= 0 && row < numRows && col >= 0 && col < numCols)
+                return tiles[row,col].getBlocked() || (objMap[row, col] != 0);
+            return true;
         }
 
         public int getTileType(int row, int col)

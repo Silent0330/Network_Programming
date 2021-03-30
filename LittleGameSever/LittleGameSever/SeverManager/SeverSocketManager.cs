@@ -1,18 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.Timers;
-using System.Drawing;
-using LittleGameSever.SeverManager;
-using System.Windows.Forms;
-using LittleGameSever;
 
-namespace LittleGame.SeverManager
+namespace LittleGameSever.SeverManager
 {
     class SeverSocketManager
     {
@@ -101,7 +95,6 @@ namespace LittleGame.SeverManager
                                 clientId_List[j] = j;
                             }
                         }
-                        break;
                     }
                     catch (Exception exception)
                     {
