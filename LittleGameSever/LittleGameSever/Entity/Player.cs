@@ -33,7 +33,8 @@ namespace LittleGameSever.Entity
             this.tileMap = state.tileMap;
 
             //position
-            this.point = new Point(x,y);
+            this.px = x;
+            this.py = y;
             this.vx = 0;
             this.vy = 0;
             this.stepSize = 10;
@@ -143,7 +144,7 @@ namespace LittleGameSever.Entity
                 {
                     if (bulletCount > 0 && attackDelay == 0)
                     {
-                        state.bullet_List.Add(new Bullet(state, tileMap, id, face, point.X + width / 2, point.Y + height / 2));
+                        state.bullet_List.Add(new Bullet(state, tileMap, id, face, px + width / 2, py + height / 2));
                         bulletCount--;
                         attackDelay = attackSpeed;
                         for (int i = 0; i < state.playerNum; i++)
@@ -190,7 +191,7 @@ namespace LittleGameSever.Entity
                 {
                     for(int i = 0; i < state.playerNum; i++)
                     {
-                        state.AddMessage(i, "Move," + id.ToString() + "," + point.X.ToString() + "," + point.Y.ToString());
+                        state.AddMessage(i, "Move," + id.ToString() + "," + px.ToString() + "," + py.ToString());
                     }
                 }
                 Attack();

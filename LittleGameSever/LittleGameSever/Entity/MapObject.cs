@@ -10,7 +10,8 @@ namespace LittleGameSever.Entity
         protected TileMap tileMap;
 
         //position and move
-        protected Point point;
+        protected int px;
+        protected int py;
         protected int height, width;
         protected int vx, vy;
         protected int stepSize = 5;
@@ -45,7 +46,7 @@ namespace LittleGameSever.Entity
 
         public Rectangle GetRectangle()
         {
-            return new Rectangle(point.X, point.Y, width, height);
+            return new Rectangle(px, py, width, height);
         }
 
         public bool InterSection(MapObject obj)
@@ -65,8 +66,8 @@ namespace LittleGameSever.Entity
             if (moveDelay == 0)
             {
                 SetSpeed();
-                dx = point.X + vx;
-                dy = point.Y + vy;
+                dx = px + vx;
+                dy = py + vy;
                 if (vx != 0 || vy != 0)
                     moveDelay = moveSpeed;
             }
@@ -101,8 +102,8 @@ namespace LittleGameSever.Entity
             int l, r, u, d;
 
             //up down
-            l = point.X / TileMap.TILE_SIZE;
-            r = (point.X + width) / TileMap.TILE_SIZE;
+            l = px / TileMap.TILE_SIZE;
+            r = (px + width) / TileMap.TILE_SIZE;
             u = dy / TileMap.TILE_SIZE;
             d = (dy + height) / TileMap.TILE_SIZE;
             if (dy >= 0)
@@ -115,7 +116,7 @@ namespace LittleGameSever.Entity
                 downBlocked = true;
             if ((vy < 0 && upBlocked) || (vy > 0 && downBlocked))
             {
-                dy = point.Y;
+                dy = py;
                 vy = 0;
                 blocked = true;
             }
@@ -135,7 +136,7 @@ namespace LittleGameSever.Entity
                 rightBlocked = true;
             if ((vx < 0 && leftBlocked) || (vx > 0 && rightBlocked))
             {
-                dx = point.X;
+                dx = px;
                 vx = 0;
                 blocked = true;
             }
@@ -144,11 +145,11 @@ namespace LittleGameSever.Entity
         
         protected bool SetPosition()
         {
-            bool changed = (point.X != dx || point.Y != dy);
+            bool changed = (px != dx || py != dy);
             if(changed)
             {
-                point.X = dx;
-                point.Y = dy;
+                px = dx;
+                py = dy;
             }
             return changed;
         }

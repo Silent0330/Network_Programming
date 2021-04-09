@@ -26,7 +26,8 @@ namespace LittleGameSever.Entity
             this.owner = id;
 
             // position
-            this.point = new Point(x,y);
+            this.px = x;
+            this.py = y;
             this.vx = 0;
             this.vy = 0;
             this.stepSize = 20;
@@ -106,24 +107,24 @@ namespace LittleGameSever.Entity
 
         public Rectangle GetMoveRectangle()
         {
-            int x = point.X, y = point.Y, w = width, h = height;
+            int x = px, y = py, w = width, h = height;
             if(face == UP)
             {
-                h = height + (point.Y - dy);
+                h = height + (py - dy);
                 y = dy;
             }
             else if (face == DOWN)
             {
-                h = height + (dy - point.Y);
+                h = height + (dy - py);
             }
             else if (face == LEFT)
             {
-                w = width + (point.X - dx);
+                w = width + (px - dx);
                 x = dx;
             }
             else if (face == RIGHT)
             {
-                w = width + (dx - point.X);
+                w = width + (dx - px);
             }
             return new Rectangle(x, y, w, h);
         }
