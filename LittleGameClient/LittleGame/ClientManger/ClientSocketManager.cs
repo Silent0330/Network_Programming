@@ -167,7 +167,7 @@ namespace LittleGame.Sever
                         }
                         else if (messageArgs[0].Equals("Dead"))
                         {
-                            state.players[int.Parse(messageArgs[1])].SetDead();
+                            state.players[int.Parse(messageArgs[1])].Dead = true;
                         }
                         else if (messageArgs[0].Equals("PlayerNum"))
                         {

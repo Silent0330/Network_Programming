@@ -16,6 +16,8 @@ namespace LittleGame.Entity
         private int id;
         private bool alive;
         public bool Alive { get => alive; }
+        private bool dead;
+        public bool Dead { get => dead; set => dead = value; }
         private int hp;
 
         private bool attack;
@@ -86,6 +88,7 @@ namespace LittleGame.Entity
             this.reloadDone = false;
             this.bulletCount = 6;
             this.maxBulletCount = 6;
+            this.dead = false;
 
             LoadImage(images[this.id, this.face]);
             this.state.Controls.Add(pictureBox);
@@ -109,21 +112,18 @@ namespace LittleGame.Entity
             this.point.X = x;
             this.point.Y = y;
         }
-
-        public void SetDead()
-        {
-            if(alive)
-            {
-                alive = false;
-                state.Controls.Remove(this.pictureBox);
-            }
-        }
-
+        
 
         public override void UIUpdate()
         {
             if (alive)
             {
+                if(dead)
+                {
+                    alive = false;
+                    state.Controls.Remove(this.pictureBox);
+                    return;
+                }
                 if (attack)
                 {
                     state.clientBullets_List.Add(new ClientBullet(state, face, point.X + size.Width / 2, point.Y + size.Height / 2));
