@@ -1,6 +1,8 @@
 ﻿using LittleGame.Entity;
 using LittleGame.TileMaps;
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace LittleGame.State
@@ -15,6 +17,7 @@ namespace LittleGame.State
         public bool gameOver;
         private System.Windows.Forms.Label winnerLabel;
         private System.Windows.Forms.Label bulletcountLabel;
+        private Thread gameThread;
 
         private static System.Drawing.Point[] playerPoints =
         {
@@ -96,6 +99,10 @@ namespace LittleGame.State
             this.Controls.Add(bulletcountLabel);
             bulletcountLabel.BringToFront();
 
+            gameThread = new Thread(GameLoop);
+            gameThread.IsBackground = true;
+            gameThread.Start();
+
             gsm.csm.state = this;
             gsm.csm.SendMessage("Ready," + true.ToString());
         }
@@ -176,43 +183,20 @@ namespace LittleGame.State
 
         public override void Update()
         {
-            if (!gsm.csm.Connected)
-            {
-                gsm.SetState(GameStateManager.MENUSTATE);
-            }
             if (!gameOver)
             {
+                if (!gsm.csm.Connected)
+                {
+                    gsm.SetState(GameStateManager.MENUSTATE);
+                }
+
                 for (int i = 0; i < playerNum; i++)
                 {
-                    players[i].Update();
-                }
-                for(int i = 0; i < 20 && recivedCommand_List.Count > 0; i++)
-                {
-                    string[] messageArgs = recivedCommand_List[0].Split(',');
-                    if (messageArgs[0].Equals("BulletMove"))
-                    {
-                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
-                        {
-                            clientBullets_List[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
-                            recivedCommand_List.RemoveAt(0);
-                        }
-                        else
-                            break;
-                    }
-                    else if (messageArgs[0].Equals("BulletRemove"))
-                    {
-                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
-                        {
-                            clientBullets_List[int.Parse(messageArgs[1])].End = true;
-                            recivedCommand_List.RemoveAt(0);
-                        }
-                        else
-                            break;
-                    }
+                    players[i].UIUpdate();
                 }
                 for (int i = 0; i < clientBullets_List.Count; i++)
                 {
-                    clientBullets_List[i].Update();
+                    clientBullets_List[i].UIUpdate();
                     if(clientBullets_List[i].End)
                     {
                         clientBullets_List[i].Dispose();
@@ -252,5 +236,70 @@ namespace LittleGame.State
             }
         }
 
+        private void GameLoop()
+        {
+            while (!gameOver)
+            {
+                DateTime startTime = DateTime.Now;
+
+                for (int i = 0; i < playerNum; i++)
+                {
+                    players[i].GameUpdate();
+                }
+
+                for (int i = 0; i < 20 && recivedCommand_List.Count > 0; i++)
+                {
+                    string[] messageArgs = recivedCommand_List[0].Split(',');
+                    if (messageArgs[0].Equals("BulletMove"))
+                    {
+                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
+                        {
+                            clientBullets_List[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
+                            recivedCommand_List.RemoveAt(0);
+                        }
+                        else
+                            break;
+                    }
+                    else if (messageArgs[0].Equals("BulletRemove"))
+                    {
+                        if (int.Parse(messageArgs[1]) < clientBullets_List.Count)
+                        {
+                            clientBullets_List[int.Parse(messageArgs[1])].End = true;
+                            recivedCommand_List.RemoveAt(0);
+                        }
+                        else
+                            break;
+                    }
+                }
+                for (int i = 0; i < clientBullets_List.Count; i++)
+                {
+                    clientBullets_List[i].GameUpdate();
+                }
+
+                if (!gsm.csm.GameStart)
+                {
+                    gameOver = true;
+                }
+
+                double elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
+                if (elapsedSeconds * 1000 < gsm.form.UpdateTime)
+                {
+                    Thread.Sleep(gsm.form.UpdateTime - (int)(elapsedSeconds * 1000));
+                }
+                //elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
+                //fps = (1 / elapsedSeconds);
+            }
+        }
+        public new void Dispose()
+        {
+            base.Dispose();
+            if (gameThread != null)
+            {
+                gameThread.Abort();
+                gameThread = null;
+            }
+        }
+
     }
+
 }

@@ -31,7 +31,7 @@ namespace LittleGameSever.Entity
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = state.form.UpdateTime / 16 * 1;
+            this.moveSpeed = (int)(state.form.FUpdateTime / 16 * 1);
 
             // action
             this.face = face;

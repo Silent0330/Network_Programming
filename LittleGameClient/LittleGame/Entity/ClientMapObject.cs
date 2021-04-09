@@ -17,6 +17,8 @@ namespace LittleGame.Entity
         protected int dx, dy;
         protected int moveDelay;
         protected int moveSpeed;
+        protected bool blocked;
+        public bool Blocked { get { return blocked; } }
 
         //control
         protected bool key_up;
@@ -32,7 +34,7 @@ namespace LittleGame.Entity
 
         // action
         protected int face;
-        public int Face { get { return face; } }
+        public int Face { get { return face; } set { face = value; } }
 
         public const int UP = 0;
         public const int DOWN = 1;
@@ -156,8 +158,11 @@ namespace LittleGame.Entity
         protected bool Move()
         {
             GetNextPosition();
-            CheckMapCollision();
+            blocked = CheckMapCollision();
             return SetPosition();
         }
+
+        public abstract void UIUpdate();
+        public abstract void GameUpdate();
     }
 }

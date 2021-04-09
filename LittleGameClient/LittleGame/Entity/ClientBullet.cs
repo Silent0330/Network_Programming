@@ -13,7 +13,6 @@ namespace LittleGame.Entity
 
         private bool end;
         public bool End { get => end; set => end = value; }
-        private bool blocked;
         private static System.Drawing.Bitmap[] images =
         {
             Properties.Resources.bulletup,
@@ -36,7 +35,7 @@ namespace LittleGame.Entity
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = 1;
+            this.moveSpeed = (int)(state.gsm.form.FUpdateTime / 16 * 1); ;
             this.blocked = false;
 
             this.endTime = 20;
@@ -106,23 +105,22 @@ namespace LittleGame.Entity
             state.Controls.Remove(this.pictureBox);
         }
 
-        public void Update()
+        public override void UIUpdate()
+        {
+            if (!end)
+            {
+                LoadImage(images[face]);
+                pictureBox.BringToFront();
+            }
+        }
+        public override void GameUpdate()
         {
             if (!end)
             {
                 Move();
                 if (blocked)
                     end = true;
-                LoadImage(images[face]);
-                pictureBox.BringToFront();
             }
-        }
-
-        protected new bool Move()
-        {
-            GetNextPosition();
-            blocked = CheckMapCollision();
-            return SetPosition();
         }
 
     };

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LittleGame.Entity
 {
-    class ClientPlayer
+    class ClientPlayer : ClientMapObject
     {
         private ClientPlayingState state;
         private System.Windows.Forms.PictureBox pictureBox;
@@ -17,18 +17,6 @@ namespace LittleGame.Entity
         private bool alive;
         public bool Alive { get => alive; }
         private int hp;
-
-        //action
-        private int face;
-        public int Face { get => face; set => face = value; }
-        public const int UP = 0;
-        public const int DOWN = 1;
-        public const int LEFT = 2;
-        public const int RIGHT = 3;
-        public const int MOVEUP = 4;
-        public const int MOVEDOWN = 5;
-        public const int MOVELEFT = 6;
-        public const int MOVERIGHT = 7;
 
         private bool attack;
         public bool Attack { get => attack; set => attack = value; }
@@ -131,7 +119,8 @@ namespace LittleGame.Entity
             }
         }
 
-        public void Update()
+
+        public override void UIUpdate()
         {
             if (alive)
             {
@@ -141,14 +130,20 @@ namespace LittleGame.Entity
                     bulletCount--;
                     attack = false;
                 }
-                if(reloadDone)
+                LoadImage(images[id, face]);
+                pictureBox.BringToFront();
+            }
+        }
+        public override void GameUpdate()
+        {
+            if (alive)
+            {
+                if (reloadDone)
                 {
                     bulletCount = maxBulletCount;
                     reloadDone = false;
                     reload = false;
                 }
-                LoadImage(images[id, face]);
-                pictureBox.BringToFront();
             }
         }
     }

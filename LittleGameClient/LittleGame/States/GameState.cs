@@ -10,7 +10,7 @@ namespace LittleGame.State
 
     abstract class GameState : Panel
     {
-        protected GameStateManager gsm;
+        public GameStateManager gsm;
 
         public abstract void Update();
 

@@ -38,7 +38,7 @@ namespace LittleGameSever.Entity
             this.vy = 0;
             this.stepSize = 10;
             this.moveDelay = 0;
-            this.moveSpeed = 2;
+            this.moveSpeed = (int)(state.form.FUpdateTime / 16 * 2);
 
             //info
             this.id = id;
@@ -55,11 +55,11 @@ namespace LittleGameSever.Entity
             this.face = DOWN;
 
             //attack
-            this.attackSpeed = state.form.UpdateTime / 16 * 50;
+            this.attackSpeed = (int)(state.form.FUpdateTime / 16 * 50);
             this.attackDelay = 0;
             this.maxBulletCount = 6;
             this.bulletCount = maxBulletCount;
-            this.reloadingTime = state.form.UpdateTime / 16 * 100;
+            this.reloadingTime = (int)(state.form.FUpdateTime / 16 * 100);
             this.reloadingDownCount = 0;
 
             //rectangle

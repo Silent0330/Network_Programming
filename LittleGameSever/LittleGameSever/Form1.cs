@@ -13,6 +13,7 @@ namespace LittleGameSever
     {
         private int updateTime = 16;
         public int UpdateTime { get => updateTime; }
+        public float FUpdateTime { get => updateTime; }
         private SeverSocketManager ssm;
         private Thread gameThread;
         private System.Windows.Forms.Timer timer;

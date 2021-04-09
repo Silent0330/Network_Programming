@@ -14,7 +14,11 @@ namespace LittleGame
 {
     public partial class Form1 : Form
     {
-        private Timer timer;
+        private int updateTime = 16;
+        public int UpdateTime { get => updateTime; }
+        public float FUpdateTime { get => updateTime; }
+
+        private System.Windows.Forms.Timer timer;
         private GameStateManager gsm;
         private ClientSocketManager csm;
 
@@ -25,7 +29,7 @@ namespace LittleGame
             gsm = new GameStateManager(this, csm);
 
             timer = new System.Windows.Forms.Timer();
-            this.timer.Interval = 17;
+            this.timer.Interval = updateTime;
             this.timer.Tick += new System.EventHandler(this.loop);
             this.timer.Enabled = true;
             this.timer.Start();
