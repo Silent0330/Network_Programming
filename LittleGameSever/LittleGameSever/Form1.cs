@@ -14,6 +14,7 @@ namespace LittleGameSever
         private int updateTime = 16;
         public int UpdateTime { get => updateTime; }
         public float FUpdateTime { get => updateTime; }
+		
         private SeverSocketManager ssm;
         private Thread gameThread;
         private System.Windows.Forms.Timer timer;
@@ -21,7 +22,7 @@ namespace LittleGameSever
 
         private bool playing;
         public bool Playing { get => playing; }
-        PlayingState playingState;
+        private PlayingState playingState;
 
         private DataTable propertiesDataTable;
 
@@ -212,6 +213,11 @@ namespace LittleGameSever
 
         private void btn_Exit_Click(object sender, EventArgs e)
         {
+            if (playing)
+            {
+				StopGame();
+			}
+            ssm.Close();
             Close();
         }
     }
