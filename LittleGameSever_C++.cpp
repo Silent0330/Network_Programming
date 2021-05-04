@@ -12,25 +12,49 @@
 #include <signal.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <pthread.h>
 
-#define PORT "7777"
+#define PORT "6666"
 #define BACKLOG 10
 
-int sockfd, sever_fd, clients_fd[4];
-int clients_num = 0;
+using namespace std;
+
+int sockfd;
 struct addrinfo hints, *servinfo, *p;
 struct sockaddr_storage their_addr;
 socklen_t sin_size;
 struct sigaction sa;
 int yes=1;
 char s[INET_ADDRSTRLEN];
+vector<string> sever_ips;
+vector<int> sever_fds;
+vector<pthread_t> sever_threads;
 int rv;
 
 pthread_t waitForConnect_thread; // 宣告 pthread 變數
-bool game_start, waitingForConnect;
-bool connecting[4];
+bool waitingForConnect;
 	
+vector<string> split(const string& str, const string& delim) {
+	vector<string> res;
+	if("" == str) return res;
+	//先将要切割的字符串从string类型转换为char*类型
+	char * strs = new char[str.length() + 1] ; //不要忘了
+	strcpy(strs, str.c_str()); 
+ 
+	char * d = new char[delim.length() + 1];
+	strcpy(d, delim.c_str());
+ 
+	char *p = strtok(strs, d);
+	while(p) {
+		string s = p; //分割得到的字符串转换为string类型
+		res.push_back(s); //存入结果数组
+		p = strtok(NULL, d);
+	}
+ 
+	return res;
+}
+
 void sigchld_handler(int s){
 	while(waitpid(-1, NULL, WNOHANG) > 0);
 }
@@ -42,11 +66,66 @@ void *get_in_addr(struct sockaddr *sa){
 	return &(((struct sockaddr_in6*)sa) -> sin6_addr);
 }
 
+void* handleSever(void* arg) {
+	int sever_fd = *(int*)arg;
+	int datasize = 2048, numbytes;
+	char buf[datasize];
+	bool connected = true;
+	while(connected) {
+		try {
+			numbytes = recv(sever_fd, buf, datasize-1, 0);
+			if (numbytes == -1 || numbytes == 0) {
+				perror("recv");
+				connected = false;
+				break;
+			}
+			string receivemessage(buf);
+			cout << receivemessage << "\n";
+			vector<string> receivemessages = split(receivemessage, ";");
+		}
+		catch(exception &e) {
+			connected = false;
+			break;
+		}
+	}
+	cout << sever_fd << " exit\n";
+	close(sever_fd);
+	//lock sever_fds and sever_ips
+	int ind = -1;
+	for(int i = 0; i < sever_fds.size(); i++) {
+		if(sever_fds[i] == sever_fd) {
+			ind = i;
+			break;
+		}
+	}
+	if(ind != -1) {
+		sever_fds.erase(sever_fds.begin() + ind);
+		sever_ips.erase(sever_ips.begin() + ind);
+	}
+	//unlock sever_fds and sever_ips
+	pthread_exit(NULL); // 離開子執行緒
+}
+
+void checkConnection() {
+	string message = " ";
+	//lock sever_fds and sever_ips
+	for(int i = 0; i < sever_fds.size(); i++) {
+		if(send(sever_fds[i], message.c_str(), message.length(), 0) == -1){
+			perror("sever disconnect");
+			close(sever_fds[i]);
+			sever_fds.erase(sever_fds.begin() + i);
+			sever_ips.erase(sever_ips.begin() + i);
+			i--;
+		}
+	}
+	//unlock sever_fds and sever_ips
+}
+
 void* waitForConnect(void* arg) {
 	int datasize = 2048, numbytes;
 	char buf[datasize];
 	waitingForConnect = true;
-	while(1){
+	while(waitingForConnect){
 		try{
 			sin_size = sizeof their_addr;
 			int new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
@@ -57,72 +136,54 @@ void* waitForConnect(void* arg) {
 			inet_ntop(their_addr.ss_family, get_in_addr((struct sockaddr *)&their_addr), s, sizeof s);
 			printf("server: got connection form %s\n", s);
 			
-			if ((numbytes = recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+			if ((numbytes = recv(new_fd, buf, datasize-1, 0)) == -1) {
 				perror("recv");
-				waitingForConnect = false;
-				pthread_exit(NULL)
 			}
-			std:: string receivemessage(buf);
-			if(!game_start) {
-				if(receivemessage.equal("BeSever")) {
-					if(sever_fd != -1) {
-						std::string message = "Success;";
-						if(send(new_fd, message.c_str(), message.length(), 0) == -1){
-							perror("send");
-							close(new_fd);
-						}
-						else {
-							sever_fd = new_fd;
-						}
-					}
-					else {
-						std::string message = "Fail;";
-						if(send(new_fd, message.c_str(), message.length(), 0) == -1){
-							perror("send");
-							close(new_fd);
-						}
-						close(new_fd);
-					}
-					continue;
-				}
-
-				if(clients_num < 4){
-					std::string message = "Id," + std::to_string(clients_num);
+			string receivemessage(buf);
+			cout << receivemessage << "\n";
+			vector<string> receivemessages = split(receivemessage, ";");
+			checkConnection();
+			if(receivemessages[0] == "BeSever") {
+				string message	= "Success;";
+				if(sever_ips.size() >= 10){
+					message	= "Fail;";
 					if(send(new_fd, message.c_str(), message.length(), 0) == -1){
-						perror("send");
-						close(new_fd);
-					}
-					else {
-						clients_fd[clients_num] = new_fd;
-						connecting[clients_num]= true;
-						clients_num++;
-						message = "PlayerNum," + std::to_string(clients_num);
-						for(int i = 0; i < clients_num; i++)
-						{
-							if(send(clients_fd[i], message.c_str(), message.length(), 0) == -1){
-								perror("send");
-								close(clients_fd[i]);
-							}
-						}
-						if(send(clients_fd[i], message.c_str(), message.length(), 0) == -1){
-							perror("send");
-							close(clients_fd[i]);
-						}
-					}
-				}
-				else {
-					std::string message = "Full";
-					if(send(new_fd, message.c_str(), message.length(), 0) == -1){
-						perror("send");
+						perror("sever send");
 					}
 					close(new_fd);
+					continue;
+				}
+				if(send(new_fd, message.c_str(), message.length(), 0) == -1){
+					perror("sever send");
+					close(new_fd);
+				}
+				else {
+					sever_fds.push_back(new_fd);
+					sever_ips.push_back(string(s));
+					pthread_t *handleSever_thread = new pthread_t;
+					pthread_create(handleSever_thread, NULL, handleSever, &new_fd); // 建立子執行緒
+					cout << "sever " << new_fd << " \n";
+				}
+			}
+			else if(receivemessages[0] == "BeClient"){
+				string message = "Success," + sever_ips[0] + ";";
+				if(send(new_fd, message.c_str(), message.length(), 0) == -1){
+					perror("client send");
+					close(new_fd);
+				}
+				else {
+					cout << "client " << new_fd << " \n";
 				}
 			}
 			else {
-				
+				string message = "Fail";
+				if(send(new_fd, message.c_str(), message.length(), 0) == -1){
+					perror("others send");
+				}
+				close(new_fd);
 			}
 		}
-		catch(std::exception &e){
+		catch(exception &e){
 			break;
 		}
 	}
@@ -131,12 +192,10 @@ void* waitForConnect(void* arg) {
 }
 
 int main(void){
-	game_start = false;
 	waitingForConnect = false;
-	for(int i = 0; i < 4; i++)
-	{
-		connecting[i] = false;
-	}
+	sever_ips = vector<string>();
+	sever_fds = vector<int>();
+	sever_threads = vector<pthread_t>();
 	
 	
 	
@@ -199,10 +258,11 @@ int main(void){
 			break;
 		}
 	}
-	close(sockfd);
-	for(int i = 0; i < clients_num; i++) {
-		close(clients_fd[i]);
+	waitingForConnect = false;
+	for(int i = 0; i < sever_fds.size(); i++) {
+		close(sever_fds[i]);
 	}
+	close(sockfd);
 	
 	return 0;
 }

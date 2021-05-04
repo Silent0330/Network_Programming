@@ -33,7 +33,7 @@ namespace LittleGame.Client
 
         private void waitingConnect()
         {
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
             if(!connected)
             {
                 CloseConnection();
@@ -50,7 +50,9 @@ namespace LittleGame.Client
             try
             {
                 clientSocket.Connect(IPAddress.Parse(IP), port);
-                clientSocket.Send(System.Text.Encoding.UTF8.GetBytes("BeClient"));
+                connected = true;
+                waitThread.Abort();
+                clientSocket.Send(System.Text.Encoding.UTF8.GetBytes("BeClient;"));
                 byte[] bytes = new byte[2048];
                 clientSocket.Receive(bytes);
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
@@ -95,7 +97,6 @@ namespace LittleGame.Client
                 clientSocket = null;
             }
             connected = false;
-            waitThread.Join();
             return sever_ip;
         }
 

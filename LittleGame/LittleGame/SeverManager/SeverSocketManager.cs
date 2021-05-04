@@ -22,7 +22,6 @@ namespace LittleGameSever.SeverManager
 
         //Thread
         private Thread listeningThread;
-        private System.Timers.Timer checkTimer;
 
         //Connection Properties
         private int maxConnectionNum;
@@ -59,11 +58,6 @@ namespace LittleGameSever.SeverManager
                 maxConnectionNum = 0;
             }
 
-            checkTimer = new System.Timers.Timer();
-            checkTimer.Interval = 1000;
-            checkTimer.Elapsed += CheckingConnection;
-            checkTimer.Start();
-
             clientHandler_List = new List<ClientHandler>();
             clientId_List = new List<int>();
             
@@ -71,22 +65,22 @@ namespace LittleGameSever.SeverManager
 
         }
 
-        public void CheckingConnection(object sender, ElapsedEventArgs e)
+        public void CheckingConnection()
         {
-            for (int i = clientHandler_List.Count-1; i >= 0; i--)
+            try
             {
-                if(clientHandler_List[i].Connected)
-                    clientHandler_List[i].CheckConnection();
-                if (!clientHandler_List[i].Connected)
+                for (int i = clientHandler_List.Count - 1; i >= 0; i--)
                 {
-                    try
+                    if (clientHandler_List[i].Connected)
+                        clientHandler_List[i].CheckConnection();
+                    if (!clientHandler_List[i].Connected)
                     {
-                        if(!clientHandler_List[i].DisConnectChecked)
+                        if (!clientHandler_List[i].DisConnectChecked)
                         {
                             clientHandler_List[i].Close();
                             CurConnectionNum = curConnectionNum - 1;
                         }
-                        if(!form.Playing)
+                        if (!form.Playing)
                         {
                             clientHandler_List.RemoveAt(i);
                             clientId_List.RemoveAt(i);
@@ -97,20 +91,20 @@ namespace LittleGameSever.SeverManager
                             }
                         }
                     }
-                    catch (Exception exception)
-                    {
-                        Console.WriteLine(exception.ToString());
-                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.ToString());
             }
         }
 
         private void waitingConnect()
         {
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
             if (!connected)
             {
-                Close();
+                StopListeing();
             }
         }
 
@@ -123,11 +117,13 @@ namespace LittleGameSever.SeverManager
             try
             {
                 registerSocket.Connect(IPAddress.Parse(IP), port);
-                registerSocket.Send(System.Text.Encoding.UTF8.GetBytes("BeSever"));
+                connected = true;
+                registerSocket.Send(System.Text.Encoding.UTF8.GetBytes("BeSever;"));
                 byte[] bytes = new byte[2048];
                 registerSocket.Receive(bytes);
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
                 string[] messages = message.Split(';');
+                Console.WriteLine(messages[0]);
                 if (messages[0] == "Success")
                 {
                     connected = true;

@@ -73,12 +73,18 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="States\GameStateManager.cs" />
+    <Compile Include="States\JoinRoomState.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="States\MenuState.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="States\PlayingState.cs" />
     <Compile Include="TileMaps\Tile.cs" />
     <Compile Include="TileMaps\TileMap.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

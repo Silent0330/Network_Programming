@@ -112,6 +112,7 @@ namespace LittleGame
 
         private void loop(object sender, EventArgs e)
         {
+            ssm.CheckingConnection();
             if (!playing)
             {
                 if (ssm.CurConnectionNum > 0 && ssm.clientHandler_List[0].StartGameRequest)
