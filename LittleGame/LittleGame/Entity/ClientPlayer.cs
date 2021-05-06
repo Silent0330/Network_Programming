@@ -1,4 +1,4 @@
-﻿using LittleGame.State;
+﻿using LittleGame.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +70,7 @@ namespace LittleGame.Entity
             }
         };
 
-        public ClientPlayer(State.ClientPlayingState state, int id, int x, int y)
+        public ClientPlayer(ClientPlayingState state, int id, int x, int y)
         {
             this.state = state;
             pictureBox = new System.Windows.Forms.PictureBox();

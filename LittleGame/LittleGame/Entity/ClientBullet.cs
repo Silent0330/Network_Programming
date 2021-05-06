@@ -1,4 +1,4 @@
-﻿using LittleGame.State;
+﻿using LittleGame.States;
 using System;
 using System.Timers;
 
@@ -21,7 +21,7 @@ namespace LittleGame.Entity
             Properties.Resources.bulletright
         };
 
-        public ClientBullet(State.ClientPlayingState state, int face, int x, int y)
+        public ClientBullet(ClientPlayingState state, int face, int x, int y)
         {
             this.state = state;
             this.tileMap = state.tileMap;

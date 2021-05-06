@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace LittleGame.State
+namespace LittleGame.States
 {
     class ClientPlayingState : GameState
     {
@@ -52,7 +52,7 @@ namespace LittleGame.State
             Properties.Resources.Map1_1
         };
 
-        public ClientPlayingState(State.GameStateManager gsm)
+        public ClientPlayingState(GameStateManager gsm)
         {
             this.gsm = gsm;
             this.playerNum = gsm.csm.PlayerNum;

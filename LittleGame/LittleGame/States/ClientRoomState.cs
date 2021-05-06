@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LittleGame.State
+namespace LittleGame.States
 {
-    class ClientRoomState : State.GameState
+    class ClientRoomState : GameState
     {
         private int playerNum;
         private int playerId;

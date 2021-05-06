@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LittleGame.State
+namespace LittleGame.States
 {
     class MenuState : GameState
     {
@@ -159,12 +159,13 @@ namespace LittleGame.State
         //join button
         private void join_Click(object sender, EventArgs e)
         {
-            //this.Controls.Add(textBox);
-            //this.textBox.Focus();
-            string ip = gsm.csm.GetSeverIp(textBox.Text, 6666);
-            Console.WriteLine(ip);
-            if(ip != "null")
-                gsm.csm.StartConnect(ip, 7777);
+            
+            if(gsm.csm.GetSeverIp(textBox.Text, 6666))
+            {
+                gsm.SetState(GameStateManager.JOINROOMSTATE);
+            }
+            //gsm.csm.StartConnect(gsm.csm.SeverIps[0], 7777);
+
         }
 
         private void join_MouseHover(object sender, EventArgs e)

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LittleGame.State
+namespace LittleGame.States
 {
     class GameStateManager
     {
@@ -17,7 +17,8 @@ namespace LittleGame.State
         public GameState[] gameStates;
         public int currentState;
 
-        public const int NUMGAMESTATE = 3;
+        public const int NUMGAMESTATE = 4;
+        public const int JOINROOMSTATE = 3;
         public const int CLIENTPLAYINGSTATE = 2;
         public const int CLIENTROOMSTATE = 1;
         public const int MENUSTATE = 0;
@@ -42,6 +43,8 @@ namespace LittleGame.State
                 gameStates[state] = new ClientRoomState(this);
             if (state == CLIENTPLAYINGSTATE)
                 gameStates[state] = new ClientPlayingState(this);
+            if (state == JOINROOMSTATE)
+                gameStates[state] = new JoinRoomState(this);
             this.form.Controls.Add(gameStates[currentState]);
             this.form.Focus();
         }

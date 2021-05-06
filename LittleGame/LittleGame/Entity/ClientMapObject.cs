@@ -1,4 +1,4 @@
-﻿using LittleGame.State;
+﻿using LittleGame.States;
 using LittleGame.TileMaps;
 using System.Drawing;
 

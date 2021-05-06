@@ -1,6 +1,6 @@
 ﻿
 
-using LittleGame.State;
+using LittleGame.States;
 
 namespace LittleGame
 {

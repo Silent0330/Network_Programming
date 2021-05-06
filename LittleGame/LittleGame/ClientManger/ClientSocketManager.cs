@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using LittleGame.State;
+using LittleGame.States;
 
 namespace LittleGame.Client
 {
@@ -22,8 +22,9 @@ namespace LittleGame.Client
         public bool Connected { get => connected; }
         private bool gameStart;
         public bool GameStart { get => gameStart; }
+        private string[] severIps;
+        public string[] SeverIps { get => severIps; }
 
-        
 
         public ClientSocketManager()
         {
@@ -40,13 +41,13 @@ namespace LittleGame.Client
             }
         }
 
-        public string GetSeverIp(string IP, int port)
+        public bool GetSeverIp(string IP, int port)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Thread waitThread = new Thread(waitingConnect);
             waitThread.IsBackground = true;
             waitThread.Start();
-            string sever_ip = "null";
+            bool success = false;
             try
             {
                 clientSocket.Connect(IPAddress.Parse(IP), port);
@@ -60,8 +61,15 @@ namespace LittleGame.Client
                 string[] messageArgs = messages[0].Split(',');
                 if (messageArgs[0] == "Success")
                 {
-                    connected = true;
-                    sever_ip = messageArgs[1];
+                    if(messageArgs.Length > 1)
+                    {
+                        severIps = new string[messageArgs.Length-1];
+                        for (int i = 0; i < messageArgs.Length-1; i++)
+                        {
+                            severIps[i] = messageArgs[i+1];
+                        }
+                        success = true;
+                    }
                 }
                 else if (messageArgs[0] == "Fail")
                 {
@@ -97,7 +105,7 @@ namespace LittleGame.Client
                 clientSocket = null;
             }
             connected = false;
-            return sever_ip;
+            return success;
         }
 
         public void StartConnect(string IP, int port)
