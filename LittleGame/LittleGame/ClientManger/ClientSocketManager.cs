@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
@@ -59,6 +59,7 @@ namespace LittleGame.Client
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
                 string[] messages = message.Split(';');
                 string[] messageArgs = messages[0].Split(',');
+                Console.WriteLine(messages[0]);
                 if (messageArgs[0] == "Success")
                 {
                     if(messageArgs.Length > 1)
@@ -73,6 +74,7 @@ namespace LittleGame.Client
                 }
                 else if (messageArgs[0] == "Fail")
                 {
+                    connected = false;
                     try
                     {
                         clientSocket.Shutdown(SocketShutdown.Both);
@@ -84,6 +86,7 @@ namespace LittleGame.Client
                 }
                 else
                 {
+                    connected = false;
                     try
                     {
                         clientSocket.Shutdown(SocketShutdown.Both);
@@ -117,6 +120,7 @@ namespace LittleGame.Client
             try
             {
                 clientSocket.Connect(IPAddress.Parse(IP), port);
+                connected = true;
                 byte[] bytes = new byte[2048];
                 clientSocket.Receive(bytes);
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
@@ -124,6 +128,7 @@ namespace LittleGame.Client
                 string[] messageArgs = messages[0].Split(',');
                 if (messageArgs[0] == "Full")
                 {
+                    connected = false;
                     try
                     {
                         clientSocket.Shutdown(SocketShutdown.Both);
@@ -136,13 +141,13 @@ namespace LittleGame.Client
                 else if (messageArgs[0] == "Id")
                 {
                     playerId = int.Parse(messageArgs[1]);
-                    connected = true;
                     recvThread = new Thread(rcvMessage);
                     recvThread.IsBackground = true;
                     recvThread.Start();
                 }
                 else
                 {
+                    connected = false;
                     try
                     {
                         Console.WriteLine("No id");
