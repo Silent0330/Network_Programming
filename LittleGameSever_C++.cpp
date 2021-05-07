@@ -106,7 +106,7 @@ void* handleSever(void* arg) {
 	pthread_exit(NULL); // 離開子執行緒
 }
 
-void checkConnection() {
+bool checkConnection(string ip) {
 	string message = " ";
 	//lock sever_fds and sever_ips
 	for(int i = 0; i < sever_fds.size(); i++) {
@@ -117,8 +117,11 @@ void checkConnection() {
 			sever_ips.erase(sever_ips.begin() + i);
 			i--;
 		}
+		if(sever_ips[i] == ip)
+			return false;
 	}
 	//unlock sever_fds and sever_ips
+	return true;
 }
 
 void* waitForConnect(void* arg) {
@@ -142,8 +145,15 @@ void* waitForConnect(void* arg) {
 			string receivemessage(buf);
 			cout << receivemessage << "\n";
 			vector<string> receivemessages = split(receivemessage, ";");
-			checkConnection();
 			if(receivemessages[0] == "BeSever") {
+				if(!checkConnection(string(s))) {
+					string message = "Fail";
+					if(send(new_fd, message.c_str(), message.length(), 0) == -1){
+						perror("others send");
+					}
+					close(new_fd);
+					continue;
+				}
 				string message	= "Success;";
 				if(sever_ips.size() >= 10){
 					message	= "Fail;";
@@ -166,7 +176,13 @@ void* waitForConnect(void* arg) {
 				}
 			}
 			else if(receivemessages[0] == "BeClient"){
-				string message = "Success," + sever_ips[0] + ";";
+				string message = "Success";
+				//lock
+				for(int i = 0; i < sever_ips.size(); i++) {
+					message += "," + sever_ips[i];
+				}
+				//unlock
+				message += ";";
 				if(send(new_fd, message.c_str(), message.length(), 0) == -1){
 					perror("client send");
 					close(new_fd);
@@ -256,6 +272,11 @@ int main(void){
 		std::cin >> key;
 		if(key == 0) {
 			break;
+		}
+		else if(key == 1) {
+			for(int i = 0; i < sever_ips.size(); i++){
+				cout << sever_fds[i] << " ip = " << sever_ips[i] << "\n";
+			}
 		}
 	}
 	waitingForConnect = false;
