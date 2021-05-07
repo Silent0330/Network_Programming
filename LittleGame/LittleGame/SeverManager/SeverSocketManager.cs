@@ -130,6 +130,7 @@ namespace LittleGameSever.SeverManager
                 }
                 else if(messages[0] == "Fail")
                 {
+                    connected = false;
                     try
                     {
                         registerSocket.Shutdown(SocketShutdown.Both);
@@ -141,6 +142,7 @@ namespace LittleGameSever.SeverManager
                 }
                 else
                 {
+                    connected = false;
                     try
                     {
                         registerSocket.Shutdown(SocketShutdown.Both);
