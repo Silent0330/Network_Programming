@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <pthread.h>
+#include <mutex>
 
 #define PORT "6666"
 #define BACKLOG 10
@@ -31,6 +32,8 @@ vector<string> sever_ips;
 vector<int> sever_fds;
 vector<pthread_t> sever_threads;
 int rv;
+
+mutex mu;
 
 pthread_t waitForConnect_thread; // 宣告 pthread 變數
 bool waitingForConnect;
@@ -91,6 +94,7 @@ void* handleSever(void* arg) {
 	cout << sever_fd << " exit\n";
 	close(sever_fd);
 	//lock sever_fds and sever_ips
+	unique_lock<mutex> locker(mu);
 	int ind = -1;
 	for(int i = 0; i < sever_fds.size(); i++) {
 		if(sever_fds[i] == sever_fd) {
@@ -103,12 +107,14 @@ void* handleSever(void* arg) {
 		sever_ips.erase(sever_ips.begin() + ind);
 	}
 	//unlock sever_fds and sever_ips
+	locker.unlock();
 	pthread_exit(NULL); // 離開子執行緒
 }
 
 bool checkConnection(string ip) {
 	string message = " ";
 	//lock sever_fds and sever_ips
+	unique_lock<mutex> locker(mu);
 	for(int i = 0; i < sever_fds.size(); i++) {
 		if(send(sever_fds[i], message.c_str(), message.length(), 0) == -1){
 			perror("sever disconnect");
@@ -121,6 +127,7 @@ bool checkConnection(string ip) {
 			return false;
 	}
 	//unlock sever_fds and sever_ips
+	locker.unlock();
 	return true;
 }
 
@@ -168,8 +175,12 @@ void* waitForConnect(void* arg) {
 					close(new_fd);
 				}
 				else {
+					//lock
+					unique_lock<mutex> locker(mu);
 					sever_fds.push_back(new_fd);
 					sever_ips.push_back(string(s));
+					//unlock
+					locker.unlock();
 					pthread_t *handleSever_thread = new pthread_t;
 					pthread_create(handleSever_thread, NULL, handleSever, &new_fd); // 建立子執行緒
 					cout << "sever " << new_fd << " \n";
@@ -178,10 +189,12 @@ void* waitForConnect(void* arg) {
 			else if(receivemessages[0] == "BeClient"){
 				string message = "Success";
 				//lock
+				unique_lock<mutex> locker(mu);
 				for(int i = 0; i < sever_ips.size(); i++) {
 					message += "," + sever_ips[i];
 				}
 				//unlock
+				locker.unlock();
 				message += ";";
 				if(send(new_fd, message.c_str(), message.length(), 0) == -1){
 					perror("client send");
