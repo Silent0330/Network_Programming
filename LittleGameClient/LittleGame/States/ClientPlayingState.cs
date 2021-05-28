@@ -73,6 +73,7 @@ namespace LittleGame.State
             this.BackgroundImage = images[0];
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
 
+            Console.WriteLine("playerNum = " + playerNum.ToString());
             for (int i = 0; i < playerNum; i++)
             {
                 players[i] = new ClientPlayer(this, i, playerPoints[i].X, playerPoints[i].Y);

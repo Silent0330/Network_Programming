@@ -30,47 +30,63 @@ namespace LittleGame.Sever
             connected = false;
             gameStart = false;
         }
-        
+
+        private void waitingConnect()
+        {
+            Thread.Sleep(1000);
+            if (!connected)
+            {
+                CloseConnection();
+            }
+        }
+
         public void StartConnect(string IP, int port)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Thread waitThread = new Thread(waitingConnect);
+            waitThread.IsBackground = true;
+            waitThread.Start();
             try
             {
                 clientSocket.Connect(IPAddress.Parse(IP), port);
+                connected = true;
+                waitThread.Abort();
                 byte[] bytes = new byte[2048];
-                clientSocket.Receive(bytes);
+                int ret = clientSocket.Receive(bytes);
+                if(ret <= 0)
+                {
+                    return;
+                }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
+                Console.WriteLine(message);
                 string[] messages = message.Split(';');
-                string[] messageArgs = messages[0].Split(',');
-                if (messageArgs[0] == "Full")
+                for (int i = 0; i < messages.Length; i++)
                 {
-                    try
+                    string[] messageArgs = messages[i].Split(',');
+                    if (messageArgs[0] == "Full")
                     {
-                        clientSocket.Shutdown(SocketShutdown.Both);
+                        connected = false;
+                        try
+                        {
+                            clientSocket.Shutdown(SocketShutdown.Both);
+                        }
+                        finally
+                        {
+                            clientSocket = null;
+                        }
                     }
-                    finally
+                    else if (messageArgs[0] == "Id")
                     {
-                        clientSocket = null;
+                        playerId = int.Parse(messageArgs[1]);
+                        playerNum = playerId;
+                        connected = true;
+                        recvThread = new Thread(rcvMessage);
+                        recvThread.IsBackground = true;
+                        recvThread.Start();
                     }
-                }
-                else if (messageArgs[0] == "Id")
-                {
-                    playerId = int.Parse(messageArgs[1]);
-                    connected = true;
-                    recvThread = new Thread(rcvMessage);
-                    recvThread.IsBackground = true;
-                    recvThread.Start();
-                }
-                else
-                {
-                    try
+                    else if (messageArgs[0].Equals("PlayerNum"))
                     {
-                        Console.WriteLine("No id");
-                        clientSocket.Shutdown(SocketShutdown.Both);
-                    }
-                    finally
-                    {
-                        clientSocket = null;
+                        playerNum = int.Parse(messageArgs[1]);
                     }
                 }
             }
@@ -129,13 +145,18 @@ namespace LittleGame.Sever
                 try
                 {
                     byte[] bytes = new byte[2048];
-                    clientSocket.Receive(bytes);
+                    int ret = clientSocket.Receive(bytes);
+                    if(ret <= 0)
+                    {
+                        CloseConnection();
+                        break;
+                    }
                     string message = System.Text.Encoding.UTF8.GetString(bytes);
+                    Console.WriteLine(message);
                     string[] messages = message.Split(';');
                     for (int i = 0; i < messages.Length; i++)
                     {
                         string[] messageArgs = messages[i].Split(',');
-                        Console.WriteLine(message);
 
                         if (messageArgs[0].Equals("Start"))
                         {
