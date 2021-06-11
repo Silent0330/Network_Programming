@@ -2,6 +2,8 @@
 
 #include "PlayingState.h"
 #include "Bullet.h"
+#include <fcntl.h>
+#include "Utils.h"
 
 int Player::Id() { return id; }
 bool Player::Alive() { return alive; }
@@ -49,7 +51,7 @@ Player::Player(int updateTime, int id, int x, int y)
 	//rectangle
 	width = 40;
 	height = 40;
-
+
 }
 
 void Player::Hited(int damage, PlayingState *playingState)

@@ -1,130 +1,12 @@
 #include "ClientHandler.h"
 
-
-/*static void* RecvMessage(void* arg)
-{
-	ClientHandler* handler = (ClientHandler*)arg;
-	int datasize = 2048, numbytes;
-	char buf[datasize];
-	string message;
-	while (handler->connected)
-	{
-		try
-		{
-			cout << handler->sockfd << "recving\n";
-			numbytes = recv(handler->sockfd, buf, datasize - 1, 0);
-			cout << "recv ";
-			if (numbytes == -1 || numbytes == 0) {
-				perror("recv");
-				handler->connected = false;
-				break;
-			}
-			message = string(buf);
-			cout << message;
-		}
-		catch (exception e)
-		{
-			cout << e.what();
-			handler->connected = false;
-			break;
-		}
-		vector<string> messages = split(message, ";");
-		for (int i = 0; i < messages.size(); i++)
-		{
-			vector<string> messageArgs = split(messages[i], ",");
-			if (messageArgs[0] == ("Up"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->up = true;
-				}
-				else
-				{
-					handler->up = false;
-				}
-			}
-			else if (messageArgs[0] == ("Down"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->down = true;
-				}
-				else
-				{
-					handler->down = false;
-				}
-			}
-			else if (messageArgs[0] == ("Left"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->left = true;
-				}
-				else
-				{
-					handler->left = false;
-				}
-			}
-			else if (messageArgs[0] == ("Right"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->right = true;
-				}
-				else
-				{
-					handler->right = false;
-				}
-			}
-			else if (messageArgs[0] == ("Attack"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->attack = true;
-				}
-				else
-				{
-					handler->attack = false;
-				}
-			}
-			else if (messageArgs[0] == ("Reload"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->reload = true;
-				}
-				else
-				{
-					handler->reload = false;
-				}
-			}
-			else if (messageArgs[0] == ("StartGame"))
-			{
-				handler->startGameRequest = true;
-				cout << "recv start : " << handler->startGameRequest << "\n";
-			}
-			else if (messageArgs[0] == ("Ready"))
-			{
-				if (messageArgs[1] == "true")
-				{
-					handler->readyToStart = true;
-				}
-				else
-				{
-					handler->readyToStart = false;
-				}
-			}
-		}
-	}
-	
-	handler->connected = false;
-	pthread_exit(NULL); // Â÷¶}¤l°õ¦æºü
-}
-*/
+#include <fcntl.h>
+#include "Utils.h"
 
 bool ClientHandler::Connected() { return connected; }
 bool ClientHandler::DisConnectChecked() { return disConnectChecked; }
 
+int ClientHandler::Id() { return id; }
 bool ClientHandler::ReadyToStart() { return readyToStart; }
 bool ClientHandler::Up() { return up; }
 bool ClientHandler::Down() { return down; }
@@ -132,6 +14,26 @@ bool ClientHandler::Left() { return left; }
 bool ClientHandler::Right() { return right; }
 bool ClientHandler::Attack() { return attack; }
 bool ClientHandler::Reload() { return reload; }
+bool ClientHandler::StartGameRequest() { return startGameRequest; }
+
+void ClientHandler::SetId(int value) {
+	id = value;
+	SendMessage("Id," + to_string(id));
+}
+void ClientHandler::SetReadyToStart(bool value) { readyToStart = value; }
+void ClientHandler::SetUp(bool value) { up = value; }
+void ClientHandler::SetDown(bool value) { down = value; }
+void ClientHandler::SetLeft(bool value) { left = value; }
+void ClientHandler::SetRight(bool value) { right = value; }
+void ClientHandler::SetAttack(bool value) { attack = value; }
+void ClientHandler::SetReload(bool value) { reload = value; }
+void ClientHandler::SetStartGameRequest(bool value) {
+	//unique_lock<mutex> locker(startGameRequest_mu);
+	sem_wait(&startGameRequest_mu);
+	startGameRequest = value;
+	sem_post(&startGameRequest_mu);
+	//locker.unlock();
+}
 
 ClientHandler::ClientHandler() {}
 
@@ -139,8 +41,10 @@ ClientHandler::ClientHandler(int clientId, int clientSocket)
 {
 	id = clientId;
 	sockfd = clientSocket;
-	up = down = left = right = false;
+	up = down = left = right = attack = reload = false;
 
+	sem_init(&startGameRequest_mu, 0, 1);
+	sem_init(&send_mu, 0, 1);
 
 	connected = true;
 	disConnectChecked = false;
@@ -149,14 +53,104 @@ ClientHandler::ClientHandler(int clientId, int clientSocket)
 
 }
 
-void ClientHandler::ChangeId(int new_id)
+
+void ClientHandler::RecvMessage(string message)
 {
-	id = new_id;
-	SendMessage("Id," + to_string(id));
+	if (connected)
+	{
+		vector<string> messages = Utils::split(message, ";");
+		for (int i = 0; i < messages.size(); i++)
+		{
+			vector<string> messageArgs = Utils::split(messages[i], ",");
+			if (messageArgs[0] == ("Up"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetUp(true);
+				}
+				else
+				{
+					SetUp(false);
+				}
+			}
+			else if (messageArgs[0] == ("Down"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetDown(true);
+				}
+				else
+				{
+					SetDown(false);
+				}
+			}
+			else if (messageArgs[0] == ("Left"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetLeft(true);
+				}
+				else
+				{
+					SetLeft(false);
+				}
+			}
+			else if (messageArgs[0] == ("Right"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetRight(true);
+				}
+				else
+				{
+					SetRight(false);
+				}
+			}
+			else if (messageArgs[0] == ("Attack"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetAttack(true);
+				}
+				else
+				{
+					SetAttack(false);
+				}
+			}
+			else if (messageArgs[0] == ("Reload"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetReload(true);
+				}
+				else
+				{
+					SetReload(false);
+				}
+			}
+			else if (messageArgs[0] == ("StartGame"))
+			{
+				SetStartGameRequest(true);
+			}
+			else if (messageArgs[0] == ("Ready"))
+			{
+				if (messageArgs[1] == "True")
+				{
+					SetReadyToStart(true);
+				}
+				else
+				{
+					SetReadyToStart(false);
+				}
+			}
+		}
+	}
 }
 
 bool ClientHandler::SendMessage(string message)
 {
+	sem_wait(&send_mu);
+	bool result = false;
 	cout << "send client = " << id << " sock = " << sockfd << " message = " <<  message << "\n";
 	if (connected)
 	{
@@ -169,16 +163,17 @@ bool ClientHandler::SendMessage(string message)
 				connected = false;
 				close(sockfd);
 			}
+			result = true;
 		}
 		catch (exception e)
 		{
 			cout << e.what();
 			connected = false;
-			return false;
+			result = false;
 		}
-		return true;
 	}
-	return false;
+	sem_post(&send_mu);
+	return result;
 }
 
 void ClientHandler::CheckConnection()
@@ -190,5 +185,7 @@ void ClientHandler::Dispose()
 {
 	connected = false;
 	disConnectChecked = true;
+	sem_destroy(&startGameRequest_mu);
+	sem_destroy(&send_mu);
 	close(sockfd);
 }

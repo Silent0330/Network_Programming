@@ -16,10 +16,9 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
-#include <mutex>
+#include <semaphore.h>
 
 using namespace std;
-
 
 class ClientHandler
 {
@@ -27,6 +26,17 @@ private:
 	int id;
 	bool disConnectChecked;
 
+	bool up;
+	bool down;
+	bool left;
+	bool right;
+	bool attack;
+	bool reload;
+	bool readyToStart;
+	bool startGameRequest;
+
+	sem_t startGameRequest_mu;
+	sem_t send_mu;
 
 public:
 	int sockfd;
@@ -35,13 +45,7 @@ public:
 	bool Connected();
 	bool DisConnectChecked();
 
-	bool readyToStart;
-	bool up;
-	bool down;
-	bool left;
-	bool right;
-	bool attack;
-	bool reload;
+	int Id();
 	bool ReadyToStart();
 	bool Up();
 	bool Down();
@@ -49,14 +53,25 @@ public:
 	bool Right();
 	bool Attack();
 	bool Reload();
-	bool startGameRequest;
+	bool StartGameRequest();
+
+	void SetId(int value);
+	void SetReadyToStart(bool value);
+	void SetUp(bool value);
+	void SetDown(bool value);
+	void SetLeft(bool value);
+	void SetRight(bool value);
+	void SetAttack(bool value);
+	void SetReload(bool value);
+	void SetStartGameRequest(bool value);
+
 
 	ClientHandler();
 
 	ClientHandler(int clientId, int clientSocket);
 
-	void ChangeId(int new_id);
 
+	void RecvMessage(string message);
 	bool SendMessage(string message);
 
 	void CheckConnection();

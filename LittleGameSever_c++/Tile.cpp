@@ -5,7 +5,6 @@ Tile::Tile() {}
 
 Tile::Tile(int type = 0)
 {
-	std::cout << type;
 	setTileType(type);
 }
 

@@ -1,23 +1,5 @@
 #include "SeverSocketManager.h"#include "LittleGameSever.h"
-
-vector<string> split(const string& str, const string& delim) {
-	vector<string> res;
-	if ("" == str) return res;
-	char * strs = new char[str.length() + 1];
-	strcpy(strs, str.c_str());
-
-	char * d = new char[delim.length() + 1];
-	strcpy(d, delim.c_str());
-
-	char *p = strtok(strs, d);
-	while (p) {
-		string s = p;
-		res.push_back(s);
-		p = strtok(NULL, d);
-	}
-
-	return res;
-}
+#include "Utils.h"
 
 //Connection Properties
 int SeverSocketManager::MaxConnectionNum() { return maxConnectionNum; }
@@ -52,7 +34,6 @@ SeverSocketManager::SeverSocketManager(LittleGameSever *littleGameSever, int max
 	curConnectionNum = 0;
 	listening = false;
 
-	//pthread_create(&recvThread, NULL, RecvMessage, this); // 建立子執行緒
 	cout << ("Sever is ready for start\n");
 }
 
@@ -142,10 +123,6 @@ static void* ListeningAcept(void* arg)
 	FD_ZERO(&read_fds);
 	FD_ZERO(&exception_fds);
 
-	struct timeval timeout;
-	timeout.tv_sec = 30;             //妙
-	timeout.tv_usec = 0;            //微秒
-
 	int max_fd = ssm->severSockfd;
 
 	while (ssm->Listening()) {
@@ -178,7 +155,6 @@ static void* ListeningAcept(void* arg)
 		{
 			ClientHandler* handler = &(ssm->clientHandler_List[i]);
 			memset(buf, 0, sizeof(buf));
-			cout << "sockfd = " << handler->sockfd << "\n";
 			if (FD_ISSET(handler->sockfd, &read_fds))
 			{
 				int ret = recv(handler->sockfd, buf, sizeof(buf) - 1, 0);
@@ -188,6 +164,7 @@ static void* ListeningAcept(void* arg)
 					close(handler->sockfd);
 					FD_CLR(handler->sockfd, &read_fds);
 					if (!handler->DisConnectChecked()) {
+						printf("%d client disconnectd\n", handler->sockfd);
 						handler->Dispose();
 						ssm->SetCurConnectionNum(ssm->CurConnectionNum() - 1);
 					}
@@ -197,12 +174,11 @@ static void* ListeningAcept(void* arg)
 						ssm->clientId_List.erase(ssm->clientId_List.begin() + i);
 						for (int j = i; j < ssm->clientHandler_List.size(); j++)
 						{
-							ssm->clientHandler_List[j].ChangeId(j);
+							ssm->clientHandler_List[j].SetId(j);
 							ssm->clientId_List[j] = j;
 						}
+						i--;
 					}
-					i--;
-					printf("A client disconnectd\n");
 					continue;
 				}
 
@@ -211,93 +187,7 @@ static void* ListeningAcept(void* arg)
 				cout << "recv client = " << i << " sock = " << handler->sockfd << " message = " << message << "\n";
 				if (handler->connected)
 				{
-					vector<string> messages = split(message, ";");
-					for (int i = 0; i < messages.size(); i++)
-					{
-						vector<string> messageArgs = split(messages[i], ",");
-						if (messageArgs[0] == ("Up"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->up = true;
-							}
-							else
-							{
-								handler->up = false;
-							}
-						}
-						else if (messageArgs[0] == ("Down"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->down = true;
-							}
-							else
-							{
-								handler->down = false;
-							}
-						}
-						else if (messageArgs[0] == ("Left"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->left = true;
-							}
-							else
-							{
-								handler->left = false;
-							}
-						}
-						else if (messageArgs[0] == ("Right"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->right = true;
-							}
-							else
-							{
-								handler->right = false;
-							}
-						}
-						else if (messageArgs[0] == ("Attack"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->attack = true;
-							}
-							else
-							{
-								handler->attack = false;
-							}
-						}
-						else if (messageArgs[0] == ("Reload"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->reload = true;
-							}
-							else
-							{
-								handler->reload = false;
-							}
-						}
-						else if (messageArgs[0] == ("StartGame"))
-						{
-							handler->startGameRequest = true;
-							cout << "recv start : " << handler->startGameRequest << "\n";
-						}
-						else if (messageArgs[0] == ("Ready"))
-						{
-							if (messageArgs[1] == "True")
-							{
-								handler->readyToStart = true;
-							}
-							else
-							{
-								handler->readyToStart = false;
-							}
-						}
-					}
+					handler->RecvMessage(message);
 				}
 			}
 			else  if (FD_ISSET(handler->sockfd, &exception_fds))

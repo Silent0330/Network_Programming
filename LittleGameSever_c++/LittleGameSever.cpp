@@ -16,7 +16,6 @@ static void* Loop(void* arg)
 		}
 		elapsedSeconds = (clock() - startTime) / CLOCKS_PER_SEC;
 		gameSever->fps = (1 / elapsedSeconds);
-		usleep(30);
 	}
 	pthread_exit(NULL); // Â÷¶}¤l°õ¦æºü
 }
@@ -25,7 +24,7 @@ void LittleGameSever::Update()
 	while (!end) {
 		if (!playing)
 		{
-			if (ssm.CurConnectionNum() > 0 && ssm.clientHandler_List[0].startGameRequest)
+			if (ssm.CurConnectionNum() > 0 && ssm.clientHandler_List[0].StartGameRequest())
 			{
 				if (ssm.CurConnectionNum() > 1)
 				{
@@ -33,7 +32,7 @@ void LittleGameSever::Update()
 					playing = true;
 					StartGame();
 				}
-				ssm.clientHandler_List[0].startGameRequest = false;
+				ssm.clientHandler_List[0].SetStartGameRequest(false);
 			}
 		}
 		else
