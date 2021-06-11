@@ -35,7 +35,7 @@ namespace LittleGame.Entity
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = (int)(state.gsm.form.FUpdateTime / 16 * 1); ;
+            this.moveSpeed = (int)(state.gsm.form.FUpdateTime / 16 * 1);
             this.blocked = false;
 
             this.endTime = 20;

@@ -16,6 +16,7 @@ static void* Loop(void* arg)
 		}
 		elapsedSeconds = (clock() - startTime) / CLOCKS_PER_SEC;
 		gameSever->fps = (1 / elapsedSeconds);
+		usleep(30);
 	}
 	pthread_exit(NULL); // Â÷¶}¤l°õ¦æºü
 }
@@ -55,6 +56,7 @@ LittleGameSever::LittleGameSever()
 	playing = false;
 	end = false;
 	fps = 0;
+	updateTime = 16;
 	ssm = SeverSocketManager(this, 4);
 }
 
