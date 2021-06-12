@@ -7,16 +7,19 @@ static void* Loop(void* arg)
 	LittleGameSever* gameSever = (LittleGameSever*)arg;
 	while (gameSever->Playing())
 	{
-		clock_t startTime = clock();
+		clock_t  startTime, endTime;
+		startTime = clock();
 		gameSever->playingState.Update();
-		double elapsedSeconds = (clock() - startTime) / CLOCKS_PER_SEC;
+		endTime = clock();
+		double elapsedSeconds = (double)(endTime - startTime) / (double)CLOCKS_PER_SEC;
 		if (elapsedSeconds * 1000 < gameSever->UpdateTime())
 		{
-			usleep(gameSever->UpdateTime() - (int)(elapsedSeconds * 1000));
+			usleep(gameSever->UpdateTime()*1000 - (int)(elapsedSeconds * 1000000));
 		}
-		elapsedSeconds = (clock() - startTime) / CLOCKS_PER_SEC;
+		endTime = clock();
+		elapsedSeconds = (double)(endTime - startTime) / (double)CLOCKS_PER_SEC;
 		gameSever->fps = (1 / elapsedSeconds);
-		usleep(30);
+		cout << endTime << " " << startTime << " " << CLOCKS_PER_SEC << "\n";
 	}
 	pthread_exit(NULL); // Â÷¶}¤l°õ¦æºü
 }
