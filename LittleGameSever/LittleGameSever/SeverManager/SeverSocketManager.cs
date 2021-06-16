@@ -54,15 +54,15 @@ namespace LittleGameSever.SeverManager
                 maxConnectionNum = 0;
             }
 
-            checkTimer = new System.Timers.Timer();
-            checkTimer.Interval = 1000;
-            checkTimer.Elapsed += CheckingConnection;
-            checkTimer.Start();
 
             clientHandler_List = new List<ClientHandler>();
             clientId_List = new List<int>();
             recvThread_List = new List<Thread>();
-            
+
+            severSocket = null;
+            listeningThread = null;
+            checkTimer = null;
+
             curConnectionNum = 0;
 
             form.log_List.Enqueue("Sever is ready for start" + Environment.NewLine);
@@ -73,8 +73,6 @@ namespace LittleGameSever.SeverManager
         {
             for (int i = clientHandler_List.Count-1; i >= 0; i--)
             {
-                if(clientHandler_List[i].Connected)
-                    clientHandler_List[i].CheckConnection();
                 if (!clientHandler_List[i].Connected)
                 {
                     try
@@ -118,6 +116,13 @@ namespace LittleGameSever.SeverManager
                 listeningThread = new Thread(ListeningAcept);
                 listeningThread.IsBackground = true;
                 listeningThread.Start();
+            }
+            if(checkTimer == null)
+            {
+                checkTimer = new System.Timers.Timer();
+                checkTimer.Interval = 1000;
+                checkTimer.Elapsed += CheckingConnection;
+                checkTimer.Start();
             }
             form.log_List.Enqueue("Sever is listening" + Environment.NewLine);
         }
@@ -187,6 +192,11 @@ namespace LittleGameSever.SeverManager
             {
                 clientHandler_List.First().Close();
                 clientHandler_List.RemoveAt(0);
+            }
+            if (checkTimer != null)
+            {
+                checkTimer.Close();
+                checkTimer = null;
             }
             curConnectionNum = 0;
             clientId_List.Clear();

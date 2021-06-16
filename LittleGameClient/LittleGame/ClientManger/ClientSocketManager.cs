@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using LittleGame.State;
+using System.Collections.Generic;
 
 namespace LittleGame.Sever
 {
@@ -12,6 +13,29 @@ namespace LittleGame.Sever
 
         private Socket clientSocket;
         private Thread recvThread;
+
+        private List<string> receivedMessages;
+        public List<string> ReceivedMessages { get => receivedMessages; }
+        private Mutex recvMsgMutex;
+        public void AddReceivedMessage(string message)
+        {
+            recvMsgMutex.WaitOne();
+            receivedMessages.Add(message);
+            recvMsgMutex.ReleaseMutex();
+        }
+        public string PopReceivedMessage(int index)
+        {
+            string result = null;
+            recvMsgMutex.WaitOne();
+            if (index >= 0 && index <= ReceivedMessages.Count)
+            {
+                result = receivedMessages[index];
+                receivedMessages.RemoveAt(index);
+            }
+            recvMsgMutex.ReleaseMutex();
+            return result;
+        }
+
 
         private int playerId;
         public int PlayerId { get => playerId; }
@@ -29,6 +53,8 @@ namespace LittleGame.Sever
         {
             connected = false;
             gameStart = false;
+            receivedMessages = new List<string>();
+            recvMsgMutex = new Mutex();
         }
 
         private void waitingConnect()
@@ -58,6 +84,7 @@ namespace LittleGame.Sever
                     return;
                 }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
+                message = message.Replace("\n", "");
                 Console.WriteLine(message);
                 string[] messages = message.Split(';');
                 for (int i = 0; i < messages.Length; i++)
@@ -78,7 +105,6 @@ namespace LittleGame.Sever
                     else if (messageArgs[0] == "Id")
                     {
                         playerId = int.Parse(messageArgs[1]);
-                        playerNum = playerId;
                         connected = true;
                         recvThread = new Thread(rcvMessage);
                         recvThread.IsBackground = true;
@@ -140,6 +166,7 @@ namespace LittleGame.Sever
 
         private void rcvMessage()
         {
+            receivedMessages.Clear();
             while (Connected)
             {
                 try
@@ -152,6 +179,7 @@ namespace LittleGame.Sever
                         break;
                     }
                     string message = System.Text.Encoding.UTF8.GetString(bytes);
+                    message = message.Replace("\n", "");
                     Console.WriteLine(message);
                     string[] messages = message.Split(';');
                     for (int i = 0; i < messages.Length; i++)
@@ -166,33 +194,33 @@ namespace LittleGame.Sever
                         {
                             playerId = int.Parse(messageArgs[1]);
                         }
-                        else if (messageArgs[0].Equals("Move"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
-                        }
-                        else if (messageArgs[0].Equals("Face"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].Face = int.Parse(messageArgs[2]);
-                        }
-                        else if (messageArgs[0].Equals("Attack"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].Attack = true;
-                        }
-                        else if (messageArgs[0].Equals("Reload"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].Reload = true;
-                        }
-                        else if (messageArgs[0].Equals("ReloadDone"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].ReloadDone = true;
-                        }
-                        else if (messageArgs[0].Equals("Dead"))
-                        {
-                            state.players[int.Parse(messageArgs[1])].Dead = true;
-                        }
                         else if (messageArgs[0].Equals("PlayerNum"))
                         {
                             playerNum = int.Parse(messageArgs[1]);
+                        }
+                        else if (messageArgs[0].Equals("Move"))
+                        {
+                            AddReceivedMessage(messages[i]);
+                        }
+                        else if (messageArgs[0].Equals("Face"))
+                        {
+                            AddReceivedMessage(messages[i]);
+                        }
+                        else if (messageArgs[0].Equals("Attack"))
+                        {
+                            AddReceivedMessage(messages[i]);
+                        }
+                        else if (messageArgs[0].Equals("Reload"))
+                        {
+                            AddReceivedMessage(messages[i]);
+                        }
+                        else if (messageArgs[0].Equals("ReloadDone"))
+                        {
+                            AddReceivedMessage(messages[i]);
+                        }
+                        else if (messageArgs[0].Equals("Hitted"))
+                        {
+                            AddReceivedMessage(messages[i]);
                         }
                         else if (messageArgs[0].Equals("GameOver"))
                         {

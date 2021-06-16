@@ -11,7 +11,7 @@ namespace LittleGameSever
 {
     public partial class Form1 : Form
     {
-        private int updateTime = 16;
+        private int updateTime;
         public int UpdateTime { get => updateTime; }
         public float FUpdateTime { get => updateTime; }
 		
@@ -36,12 +36,12 @@ namespace LittleGameSever
             playing = false;
 
             ssm = new SeverSocketManager(this, 4);
-            
+            updateTime = 16;
             this.fps = 0;
 
 
             this.timer = new System.Windows.Forms.Timer();
-            this.timer.Interval = 30;
+            this.timer.Interval = 32;
             this.timer.Tick += new System.EventHandler(UiUpdate);
             this.timer.Enabled = true;
             this.timer.Start();

@@ -39,7 +39,7 @@ namespace LittleGameSever.Entity
             this.vy = 0;
             this.stepSize = 10;
             this.moveDelay = 0;
-            this.moveSpeed = (int)(state.form.FUpdateTime / 16 * 2);
+            this.moveSpeed = (int)(16 / state.form.FUpdateTime * 2);
 
             //info
             this.id = id;
@@ -56,11 +56,11 @@ namespace LittleGameSever.Entity
             this.face = DOWN;
 
             //attack
-            this.attackSpeed = (int)(state.form.FUpdateTime / 16 * 50);
+            this.attackSpeed = (int)(16 / state.form.FUpdateTime * 48);
             this.attackDelay = 0;
             this.maxBulletCount = 6;
             this.bulletCount = maxBulletCount;
-            this.reloadingTime = (int)(state.form.FUpdateTime / 16 * 100);
+            this.reloadingTime = (int)(16 / state.form.FUpdateTime * 96);
             this.reloadingDownCount = 0;
 
             //rectangle
@@ -69,19 +69,19 @@ namespace LittleGameSever.Entity
             
         }
 
-        public void Hited(int damage)
+        public void Hitted(int damage)
         {
             if (alive)
             {
+                for (int i = 0; i < state.playerNum; i++)
+                {
+                    state.AddMessage(i, "Hitted," + id.ToString() + "," + damage.ToString());
+                }
                 hp -= damage;
                 if(hp <=0)
                 {
                     alive = false;
                     state.aliveNum--;
-                    for (int i = 0; i < state.playerNum; i++)
-                    {
-                        state.AddMessage(i, "Dead," + id.ToString());
-                    }
                 }
             }
         }

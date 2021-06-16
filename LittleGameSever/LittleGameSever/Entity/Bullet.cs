@@ -32,7 +32,7 @@ namespace LittleGameSever.Entity
             this.vy = 0;
             this.stepSize = 20;
             this.moveDelay = 0;
-            this.moveSpeed = (int)(state.form.FUpdateTime / 16 * 1);
+            this.moveSpeed = (int)(16 / state.form.FUpdateTime * 1);
 
             // action
             this.face = face;
@@ -135,7 +135,7 @@ namespace LittleGameSever.Entity
             {
                 if (owner != i && state.players[i].Alive && InterSection(GetMoveRectangle(), state.players[i].GetRectangle()))
                 {
-                    state.players[i].Hited(damage);
+                    state.players[i].Hitted(damage);
                     end = true;
                     return;
                 }

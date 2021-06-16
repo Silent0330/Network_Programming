@@ -14,6 +14,7 @@ namespace LittleGame.State
         public List<ClientBullet> clientBullets_List;
         public List<string> recivedCommand_List;
         public int playerNum;
+        public int aliveNum;
         public bool gameOver;
         private System.Windows.Forms.Label winnerLabel;
         private System.Windows.Forms.Label bulletcountLabel;
@@ -56,6 +57,8 @@ namespace LittleGame.State
         {
             this.gsm = gsm;
             this.playerNum = gsm.csm.PlayerNum;
+            Console.WriteLine("Create PlayerNum = " + playerNum);
+            aliveNum = playerNum;
             this.tileMap = new TileMap(maps[0]);
             players = new ClientPlayer[4];
             clientBullets_List = new List<ClientBullet>();
@@ -72,8 +75,7 @@ namespace LittleGame.State
             this.BackColor = System.Drawing.Color.LightBlue;
             this.BackgroundImage = images[0];
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-
-            Console.WriteLine("playerNum = " + playerNum.ToString());
+            
             for (int i = 0; i < playerNum; i++)
             {
                 players[i] = new ClientPlayer(this, i, playerPoints[i].X, playerPoints[i].Y);
@@ -94,8 +96,8 @@ namespace LittleGame.State
             this.bulletcountLabel.AutoSize = true;
             this.bulletcountLabel.BackColor = System.Drawing.Color.Transparent;
             this.bulletcountLabel.Location = new System.Drawing.Point(700, 0);
-            this.bulletcountLabel.Size = new System.Drawing.Size(100, 100);
-            this.bulletcountLabel.Font = new System.Drawing.Font("標楷體", 32F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.bulletcountLabel.Size = new System.Drawing.Size(20, 20);
+            this.bulletcountLabel.Font = new System.Drawing.Font("標楷體", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
 
             this.Controls.Add(bulletcountLabel);
             bulletcountLabel.BringToFront();
@@ -190,7 +192,41 @@ namespace LittleGame.State
                 {
                     gsm.SetState(GameStateManager.MENUSTATE);
                 }
+                for (int i = 0; i < 20 && gsm.csm.ReceivedMessages.Count > 0; i++)
+                {
+                    String message = gsm.csm.PopReceivedMessage(0);
+                    if (message == null) continue;
+                    String[] messages = message.Split(';');
+                    for (int j = 0; j < messages.Length; j++)
+                    {
+                        String[] messageArgs = messages[j].Split(',');
 
+                        if (messageArgs[0].Equals("Move"))
+                        {
+                            players[int.Parse(messageArgs[1])].SetPoint(int.Parse(messageArgs[2]), int.Parse(messageArgs[3]));
+                        }
+                        else if (messageArgs[0].Equals("Face"))
+                        {
+                            players[int.Parse(messageArgs[1])].Face = (int.Parse(messageArgs[2]));
+                        }
+                        else if (messageArgs[0].Equals("Attack"))
+                        {
+                            players[int.Parse(messageArgs[1])].Attack(); ;
+                        }
+                        else if (messageArgs[0].Equals("Reload"))
+                        {
+                            players[int.Parse(messageArgs[1])].Reload = (true);
+                        }
+                        else if (messageArgs[0].Equals("ReloadDone"))
+                        {
+                            players[int.Parse(messageArgs[1])].ReloadDone = (true);
+                        }
+                        else if (messageArgs[0].Equals("Hitted"))
+                        {
+                            players[int.Parse(messageArgs[1])].Hitted(int.Parse(messageArgs[2]));
+                        }
+                    }
+                }
                 for (int i = 0; i < playerNum; i++)
                 {
                     players[i].UIUpdate();
@@ -209,7 +245,9 @@ namespace LittleGame.State
                 {
                     gameOver = true;
                 }
-                if(players[gsm.csm.PlayerId].Reload && !players[gsm.csm.PlayerId].ReloadDone)
+                Console.WriteLine("PlayerNum = " + playerNum);
+                bulletcountLabel.Location = new System.Drawing.Point(players[gsm.csm.PlayerId].point.X + 15, players[gsm.csm.PlayerId].point.Y - 20);
+                if (players[gsm.csm.PlayerId].Reload)
                 {
                     this.bulletcountLabel.Text = "R";
                 }
@@ -217,6 +255,7 @@ namespace LittleGame.State
                 {
                     this.bulletcountLabel.Text = players[gsm.csm.PlayerId].bulletCount.ToString();
                 }
+                bulletcountLabel.BringToFront();
             }
             if (gameOver)
             {

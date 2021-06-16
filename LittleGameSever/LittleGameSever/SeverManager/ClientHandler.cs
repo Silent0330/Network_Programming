@@ -79,7 +79,12 @@ namespace LittleGameSever.SeverManager
                 bytes = new byte[2048];
                 try
                 {
-                    socket.Receive(bytes);
+                    int ret = socket.Receive(bytes);
+                    if(ret <= 0)
+                    {
+                        connected = false;
+                        break;
+                    }
                 }
                 catch (System.Exception e)
                 {
@@ -88,9 +93,11 @@ namespace LittleGameSever.SeverManager
                     break;
                 }
                 string message = System.Text.Encoding.UTF8.GetString(bytes);
+                message = message.Replace("\n", "");
                 string[] messages = message.Split(';');
                 for(int i = 0; i < messages.Length; i++)
                 {
+                    Console.WriteLine("client= " + id + " recv= " + messages[i]);
                     string[] messageArgs = messages[i].Split(',');
 
                     if (messageArgs[0].Equals("Up"))
@@ -135,6 +142,7 @@ namespace LittleGameSever.SeverManager
             {
                 if(!message.Last().Equals(';'))
                     message += ";";
+                message += "\n";
                 byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
                 try
                 {
@@ -150,29 +158,6 @@ namespace LittleGameSever.SeverManager
                 return true;
             }
             return false;
-        }
-
-        public void CheckConnection()
-        {
-            try
-            {
-                byte[] tmp = new byte[1];
-                
-                socket.Send(tmp, 0, 0);
-            }
-            catch (SocketException e)
-            {
-                // 10035 == WSAEWOULDBLOCK
-                if (e.NativeErrorCode.Equals(10035))
-                {
-                    Console.WriteLine("Still Connected, but the Send would block");
-                }
-                else
-                {
-                    connected = false;
-                    Console.WriteLine("Disconnected: error code {0}!", e.NativeErrorCode);
-                }
-            }
         }
 
         public void Close()
