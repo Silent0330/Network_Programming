@@ -5,13 +5,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.support.v4.app.INotificationSideChannel;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.littlegame.Entity.Bullet;
 import com.example.littlegame.Entity.ClientPlayer;
-import com.example.littlegame.GameActivity;
 import com.example.littlegame.Tiles.TileMap;
 
 import java.util.Vector;
@@ -101,7 +98,7 @@ public class ClientPlayingState extends GameState{
 
                     if (messageArgs[0].equals("Move"))
                     {
-                        players[Integer.parseInt(messageArgs[1])].setPoint(Integer.parseInt(messageArgs[2]), Integer.parseInt(messageArgs[3]));
+                        players[Integer.parseInt(messageArgs[1])].SetDestinationPoint(Integer.parseInt(messageArgs[2]), Integer.parseInt(messageArgs[3]));
                     }
                     else if (messageArgs[0].equals("Face"))
                     {
@@ -129,6 +126,13 @@ public class ClientPlayingState extends GameState{
             {
                 gsm.SetState(GameStateManager.MENUSTATE);
             }
+
+            players[playerId].setKey_Up(key_up);
+            players[playerId].setKey_Down(key_down);
+            players[playerId].setKey_Left(key_left);
+            players[playerId].setKey_Right(key_right);
+            players[playerId].setAttack(key_attack);
+            players[playerId].setReload(key_reload);
 
             for (int i = 0; i < playerNum; i++)
             {
@@ -168,9 +172,6 @@ public class ClientPlayingState extends GameState{
             for (int i = 0; i < bullets.size(); i++) {
                 bullets.elementAt(i).Draw(canvas);
             }
-            paint.setColor(Color.argb(0.5f, 0.5f, 0.5f, 0.5f));
-            canvas.drawCircle(atkBtnRect.centerX(), atkBtnRect.centerY(), atkBtnRect.width()/2, paint);
-            canvas.drawCircle(reloadBtnRect.centerX(), reloadBtnRect.centerY(), reloadBtnRect.width()/2, paint);
 
             paint.setColor(Color.BLACK);
             paint.setTextAlign(Paint.Align.CENTER);
@@ -179,6 +180,17 @@ public class ClientPlayingState extends GameState{
                 canvas.drawText(players[playerId].getBulletCount() + "", players[playerId].getDrawRectangle().centerX(), players[playerId].getDrawRectangle().top - 5  - paint.getFontMetrics().ascent / 2, paint);
             else
                 canvas.drawText("R", players[playerId].getDrawRectangle().centerX(), players[playerId].getDrawRectangle().top - 5  - paint.getFontMetrics().ascent / 2, paint);
+
+            if(key_attack)
+                paint.setColor(Color.argb(0.5f, 0.3f, 0.3f, 0.3f));
+            else
+                paint.setColor(Color.argb(0.5f, 0.5f, 0.5f, 0.5f));
+            canvas.drawCircle(atkBtnRect.centerX(), atkBtnRect.centerY(), atkBtnRect.width()/2, paint);
+            if(key_reload)
+                paint.setColor(Color.argb(0.5f, 0.3f, 0.3f, 0.3f));
+            else
+                paint.setColor(Color.argb(0.5f, 0.5f, 0.5f, 0.5f));
+            canvas.drawCircle(reloadBtnRect.centerX(), reloadBtnRect.centerY(), reloadBtnRect.width()/2, paint);
 
             if(drag){
                 paint.setColor(Color.argb(0.5f, 0.5f, 0.5f, 0.5f));
@@ -204,17 +216,17 @@ public class ClientPlayingState extends GameState{
 
     @Override
     public void TouchEvent(MotionEvent event) {
-        int id = -1;
+        int ind = -1;
         float x, y;
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(id == -1)
-                    id = event.findPointerIndex(event.getPointerId(0));
+                if(ind == -1)
+                    ind = 0;
             case MotionEvent.ACTION_POINTER_2_DOWN:
-                if(id == -1)
-                    id = event.findPointerIndex(event.getPointerId(1));
-                x = event.getX(id);
-                y = event.getY(id);
+                if(ind == -1)
+                    ind = 1;
+                x = event.getX(event.findPointerIndex(event.getPointerId(ind)));
+                y = event.getY(event.findPointerIndex(event.getPointerId(ind)));
                 if (!gameOver) {
                     if(!drag && x < gsm.getDrawView().getWidth()/2) {
                         touchX = dragX = x;
@@ -241,28 +253,30 @@ public class ClientPlayingState extends GameState{
                 break;
             case MotionEvent.ACTION_UP:
                 if (!gameOver) {
-                    drag = false;
-                    if(key_up) {
-                        key_up = false;
-                        gsm.getCsm().AddMessageToSend("Up,false");
+                    if(drag){
+                        drag = false;
+                        if (key_up) {
+                            key_up = false;
+                            gsm.getCsm().AddMessageToSend("Up,false");
+                        }
+                        if (key_down) {
+                            key_down = false;
+                            gsm.getCsm().AddMessageToSend("Down,false");
+                        }
+                        if (key_left) {
+                            key_left = false;
+                            gsm.getCsm().AddMessageToSend("Left,false");
+                        }
+                        if (key_right) {
+                            key_right = false;
+                            gsm.getCsm().AddMessageToSend("Right,false");
+                        }
                     }
-                    if(key_down) {
-                        key_down = false;
-                        gsm.getCsm().AddMessageToSend("Down,false");
-                    }
-                    if(key_left) {
-                        key_left = false;
-                        gsm.getCsm().AddMessageToSend("Left,false");
-                    }
-                    if(key_right) {
-                        key_right = false;
-                        gsm.getCsm().AddMessageToSend("Right,false");
-                    }
-                    if(key_attack) {
+                    if (key_attack) {
                         key_attack = false;
                         gsm.getCsm().AddMessageToSend("Attack,false");
                     }
-                    if(key_reload) {
+                    if (key_reload) {
                         key_reload = false;
                         gsm.getCsm().AddMessageToSend("Reload,false");
                     }
@@ -271,8 +285,8 @@ public class ClientPlayingState extends GameState{
             case MotionEvent.ACTION_MOVE:
                 if (!gameOver) {
                     if(drag) {
-                        touchX = event.getX();
-                        touchY = event.getY();
+                        touchX = event.getX(0);
+                        touchY = event.getY(0);
                         float dx = touchX - dragX;
                         float dy = -(touchY - dragY);
                         if(dx != 0) {

@@ -17,6 +17,7 @@ public class DrawView extends View {
     private ClientSocketManager csm;
     private int frameCount;
     private boolean initial;
+    private boolean updating;
 
     private int updateTime;
     public int getUpdateTime() { return updateTime; }
@@ -40,7 +41,7 @@ public class DrawView extends View {
     private Runnable Update = new Runnable() {
         @Override
         public void run() {
-            while (true) {
+            while (updating) {
                 long startTime = System.currentTimeMillis();
                 gsm.Update();
                 double elapsedMilliSeconds = System.currentTimeMillis() - startTime;
@@ -66,6 +67,7 @@ public class DrawView extends View {
         frameCount = (frameCount+1) % 10000;
         if(!initial) {
             gsm = new GameStateManager(this);
+            updating = true;
             thread = new Thread(Update);
             thread.start();
             initial = true;
@@ -79,5 +81,14 @@ public class DrawView extends View {
         }catch(Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void Dispose() {
+        updating = false;
+        if(thread != null) {
+            thread.interrupt();
+            thread = null;
+        }
+        csm.Disconnet();
     }
 }

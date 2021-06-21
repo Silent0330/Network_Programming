@@ -4,13 +4,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.hardware.camera2.params.BlackLevelPattern;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.example.littlegame.DrawView;
-import com.example.littlegame.GameActivity;
-import com.example.littlegame.R;
 
 public class MenuState extends GameState{
 
@@ -120,7 +116,7 @@ public class MenuState extends GameState{
         }
 
         public String KeyDown(int x, int y) {
-            if(drawView.getWidth()*2/32 <= x && x <= drawView.getWidth()*28/32 && y >= drawView.getHeight()*24/32 && y <= drawView.getHeight()*26/32) {
+            if(drawView.getWidth()*2/32 <= x && x < drawView.getWidth()*28/32 && y >= drawView.getHeight()*24/32 && y <= drawView.getHeight()*26/32) {
                 return inputButtons[(x-drawView.getWidth()*2/32)/(drawView.getWidth()*2/32)].getText();
             }
             return "";

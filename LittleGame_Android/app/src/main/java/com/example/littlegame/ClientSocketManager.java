@@ -54,13 +54,30 @@ public class ClientSocketManager {
         }
     }
 
+    private Runnable waitConnection = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(!connected) {
+                Disconnet();
+            }
+        }
+    };
+
     private Runnable connection = new Runnable() {
         @Override
         public void run() {
             try {
                 connecting = true;
+                Thread waitThread = new Thread(waitConnection);
+                waitThread.start();
                 clientSocket = new Socket(severIp, port);
                 connected = true;
+                waitThread.interrupt();
                 if(connected) {
                     in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "BIG5"));

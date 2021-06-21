@@ -23,4 +23,10 @@ public class MainActivity extends Activity {
         setContentView(drawView);
 
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        drawView.Dispose();
+    }
 }

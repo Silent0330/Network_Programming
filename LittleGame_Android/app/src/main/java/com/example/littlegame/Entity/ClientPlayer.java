@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.example.littlegame.R;
 import com.example.littlegame.States.ClientPlayingState;
@@ -27,14 +28,10 @@ public class ClientPlayer extends ClientMapObject{
     private int bulletCount;
     public int getBulletCount() { return bulletCount; }
     private int maxBulletCount;
+    private int animateCount;
 
     private Bitmap[] bitmaps;
 
-    public void setPoint(int x, int y)
-    {
-        px = x;
-        py = y;
-    }
 
     public static final int ACTION_UP = 0;
     public static final int ACTION_DOWN = 1;
@@ -53,18 +50,25 @@ public class ClientPlayer extends ClientMapObject{
         alive = true;
         direction = DOWN;
         action = ACTION_DOWN;
+        animateCount = -1;
+
         px = x;
         py = y;
-        vx = vy = dx = dy = 0;
-        stepSize = 20;
+        dx = px;
+        dy = py;
         width = 50;
         height = 50;
+        vx = vy = 0;
+        stepSize = 20;
+
         hp = 1;
+
         attack = false;
         reload = false;
         reloadDone = false;
         bulletCount = 6;
         maxBulletCount = 6;
+
 
         key_up = key_down = key_left = key_right = false;
 
@@ -78,15 +82,19 @@ public class ClientPlayer extends ClientMapObject{
     private void LoadImage()
     {
         if(id == 0) {
-            bitmaps = new Bitmap[8];
+            bitmaps = new Bitmap[12];
             bitmaps[0] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1up);
-            bitmaps[1] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1down);
-            bitmaps[2] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1left);
-            bitmaps[3] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1right);
-            bitmaps[4] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveup);
-            bitmaps[5] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1movedown);
-            bitmaps[6] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveleft);
-            bitmaps[7] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveright);
+            bitmaps[1] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveup_1);
+            bitmaps[2] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveup_2);
+            bitmaps[3] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1down);
+            bitmaps[4] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1movedown_1);
+            bitmaps[5] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1movedown_2);
+            bitmaps[6] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1left);
+            bitmaps[7] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveleft_1);
+            bitmaps[8] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveleft_2);
+            bitmaps[9] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1right);
+            bitmaps[10] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveright_1);
+            bitmaps[11] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p1moveright_2);
         }
         else if(id == 1) {
             bitmaps = new Bitmap[8];
@@ -99,6 +107,34 @@ public class ClientPlayer extends ClientMapObject{
             bitmaps[6] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p2moveleft);
             bitmaps[7] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p2moveright);
         }
+        else if(id == 2) {
+            bitmaps = new Bitmap[8];
+            bitmaps[0] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3up);
+            bitmaps[1] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3down);
+            bitmaps[2] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3left);
+            bitmaps[3] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3right);
+            bitmaps[4] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3moveup);
+            bitmaps[5] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3movedown);
+            bitmaps[6] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3moveleft);
+            bitmaps[7] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p3moveright);
+        }
+        else if(id == 3) {
+            bitmaps = new Bitmap[8];
+            bitmaps[0] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4up);
+            bitmaps[1] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4down);
+            bitmaps[2] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4left);
+            bitmaps[3] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4right);
+            bitmaps[4] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4moveup);
+            bitmaps[5] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4movedown);
+            bitmaps[6] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4moveleft);
+            bitmaps[7] = BitmapFactory.decodeResource(state.getGsm().getDrawView().getResources(), R.drawable.p4moveright);
+        }
+    }
+
+    public void SetDestinationPoint(int x, int y)
+    {
+       dx = x;
+       dy = y;
     }
 
     public void Hitted(int damage) {
@@ -120,13 +156,41 @@ public class ClientPlayer extends ClientMapObject{
 
     private void SetAction() {
         action = direction;
+        if(id == 0) {
+            if(vx != 0 || vy != 0) {
+                animateCount = (animateCount+1) % 2;
+                action = direction*3 + 1 + animateCount;
+            }
+            else {
+                action = action = direction*3;
+                animateCount = -1;
+            }
+        }
     }
 
     @Override
     public void Draw(Canvas canvas) {
         Paint paint = new Paint();
+        SetAction();
         if (alive) {
             canvas.drawBitmap(bitmaps[action], getBitmapRect(), getDrawRectangle(), paint);
+        }
+    }
+
+    private void MoveToDestination() {
+        if(px != dx){
+            vx = dx - px;
+            px = dx;
+        }
+        else {
+            vx = 0;
+        }
+        if(py != dy){
+            vy = dy - py;
+            py = dy;
+        }
+        else {
+            vy = 0;
         }
     }
 
@@ -134,7 +198,7 @@ public class ClientPlayer extends ClientMapObject{
     public void Update() {
         if (alive)
         {
-            SetAction();
+            MoveToDestination();
             if(attack) {
                 attack = false;
             }

@@ -1,19 +1,13 @@
 package com.example.littlegame.States;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.example.littlegame.GameActivity;
-import com.example.littlegame.MainActivity;
 import com.example.littlegame.R;
 
 public class ClientRoomState extends GameState{
@@ -34,7 +28,7 @@ public class ClientRoomState extends GameState{
 
         subpanelRects = new Rect[4];
         for(int i = 0; i < 4; i++) {
-            subpanelRects[i] = new Rect(0, gsm.getDrawView().getHeight()*i*4/32, gsm.getDrawView().getWidth()*12/32, gsm.getDrawView().getHeight()*(i+1)*4/32);
+            subpanelRects[i] = new Rect(0, gsm.getDrawView().getHeight()*i*6/32, gsm.getDrawView().getWidth()*12/32, gsm.getDrawView().getHeight()*(i+1)*6/32);
         }
         playerIconBitmaps = new Bitmap[4];
         playerIconBitmaps[0] = BitmapFactory.decodeResource(gsm.getDrawView().getResources(), R.drawable.p1down);
